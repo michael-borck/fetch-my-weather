@@ -11,7 +11,7 @@
 **Concept code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import json
 import time
 import requests
@@ -90,7 +90,7 @@ class WeatherHomeAutomation:
     def get_current_weather(self):
         """Get current weather data"""
         location = self.config["location"]
-        weather_text = simple_weather.get_weather(location=location, view_options="q")
+        weather_text = fetch_my_weather.get_weather(location=location, view_options="q")
         
         if isinstance(weather_text, str) and not weather_text.startswith("Error:"):
             weather_data = {

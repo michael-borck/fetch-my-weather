@@ -11,7 +11,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import csv
 import os
 from datetime import datetime, timedelta
@@ -30,7 +30,7 @@ def record_forecast():
     location = "London"  # Change to your location
     
     # Get the weather forecast
-    forecast = simple_weather.get_weather(location=location)
+    forecast = fetch_my_weather.get_weather(location=location)
     
     if isinstance(forecast, str) and not forecast.startswith("Error:"):
         # Record date and forecast
@@ -72,7 +72,7 @@ def update_actual_temperatures():
     today = datetime.now().strftime('%Y-%m-%d')
     
     # Get today's actual weather
-    actual_weather = simple_weather.get_weather(view_options="0q")
+    actual_weather = fetch_my_weather.get_weather(view_options="0q")
     
     if isinstance(actual_weather, str) and not actual_weather.startswith("Error:"):
         # Extract actual temperature

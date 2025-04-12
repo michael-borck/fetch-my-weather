@@ -10,7 +10,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import time
 
 def check_multiple_cities(cities):
@@ -18,7 +18,7 @@ def check_multiple_cities(cities):
     
     for city in cities:
         print(f"Weather in {city}:")
-        weather = simple_weather.get_weather(location=city, view_options="0q")
+        weather = fetch_my_weather.get_weather(location=city, view_options="0q")
         
         if isinstance(weather, str) and not weather.startswith("Error:"):
             print(weather)

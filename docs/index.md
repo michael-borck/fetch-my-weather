@@ -16,24 +16,24 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 ## Installation
 
 ```bash
-pip install simple-weather
+pip install fetch-my-weather
 ```
 
 ## Quick Start
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 # Get weather for your current location (based on IP)
-current_weather = simple_weather.get_weather()
+current_weather = fetch_my_weather.get_weather()
 print(current_weather)
 
 # Get weather for Berlin in metric units
-berlin_weather = simple_weather.get_weather(location="Berlin", units="m")
+berlin_weather = fetch_my_weather.get_weather(location="Berlin", units="m")
 print(berlin_weather)
 
 # Get moon phase for a specific date
-moon = simple_weather.get_weather(is_moon=True, moon_date="2025-07-04")
+moon = fetch_my_weather.get_weather(is_moon=True, moon_date="2025-07-04")
 print(moon)
 ```
 
@@ -46,7 +46,7 @@ print(moon)
 
 ## Contributors
 
-This project is maintained by [Michael Borck](https://github.com/michael-borck) with contributions from various individuals. See the [AUTHORS file](https://github.com/michael-borck/simple-weather/blob/main/AUTHORS.md) for a complete list of contributors.
+This project is maintained by [Michael Borck](https://github.com/michael-borck) with contributions from various individuals. See the [AUTHORS file](AUTHORS.md) for a complete list of contributors.
 
 ## Acknowledgments
 

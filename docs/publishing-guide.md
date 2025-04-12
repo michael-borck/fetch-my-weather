@@ -1,6 +1,6 @@
-# Publishing Guide for simple-weather
+# Publishing Guide for fetch-my-weather
 
-This guide walks you through the process of publishing your `simple-weather` package to PyPI using modern Python tooling.
+This guide walks you through the process of publishing your `fetch-my-weather` package to PyPI using modern Python tooling.
 
 ## Prerequisites
 
@@ -37,13 +37,13 @@ Before publishing, verify that your code passes all quality checks:
 
 ```bash
 # Type checking with mypy
-mypy src/simple_weather
+mypy src/fetch_my_weather
 
 # Linting with ruff
-ruff check src/simple_weather
+ruff check src/fetch_my_weather
 
 # Formatting with ruff
-ruff format src/simple_weather
+ruff format src/fetch_my_weather
 
 # Run tests with pytest
 pytest
@@ -83,10 +83,10 @@ source test_env/bin/activate  # On Unix/MacOS
 # test_env\Scripts\activate  # On Windows
 
 # Install your package from TestPyPI
-uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ simple-weather
+uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ fetch-my-weather
 
 # Test that it works
-python -c "import simple_weather; print(simple_weather.__version__)"
+python -c "import fetch_my_weather; print(fetch_my_weather.__version__)"
 ```
 
 ## Step 6: Publish to Real PyPI
@@ -108,21 +108,21 @@ source verify_env/bin/activate  # On Unix/MacOS
 # verify_env\Scripts\activate  # On Windows
 
 # Install your package from PyPI
-uv pip install simple-weather
+uv pip install fetch-my-weather
 
 # Test that it works
-python -c "import simple_weather; print(simple_weather.__version__)"
+python -c "import fetch_my_weather; print(fetch_my_weather.__version__)"
 ```
 
 ## Congratulations!
 
-Your `simple-weather` package is now published and available for anyone to install using `pip install simple-weather`!
+Your `fetch-my-weather` package is now published and available for anyone to install using `pip install fetch-my-weather`!
 
 ## Updating Your Package Later
 
 When you want to release a new version:
 
-1. Update the version number in `simple_weather/__init__.py`
+1. Update the version number in `fetch_my_weather/__init__.py`
 2. Make your code changes
 3. Run quality checks (mypy, ruff, pytest)
 4. Rebuild using `python -m build`

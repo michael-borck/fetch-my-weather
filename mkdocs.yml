@@ -1,8 +1,8 @@
-site_name: Simple Weather
+site_name: Fetch My Weather
 site_description: A beginner-friendly Python package for fetching weather data, designed for educational use
-site_url: https://michael-borck.github.io/simple-weather/
-repo_url: https://github.com/michael-borck/simple-weather
-repo_name: michael-borck/simple-weather
+site_url: https://michael-borck.github.io/fetch-my-weather/
+repo_url: https://github.com/michael-borck/fetch-my-weather
+repo_name: michael-borck/fetch-my-weather
 
 docs_dir: docs
 site_dir: site
@@ -96,5 +96,5 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/michael-borck/simple-weather
-      name: Simple Weather on GitHub
+      link: https://github.com/michael-borck/fetch-my-weather
+      name: Fetch My Weather on GitHub

@@ -1,10 +1,10 @@
-# Teaching Guide for simple-weather
+# Teaching Guide for fetch-my-weather
 
-This guide is designed to help educators use the `simple-weather` package as a teaching tool in programming courses. It includes suggested lesson plans, learning objectives, and teaching approaches for different skill levels.
+This guide is designed to help educators use the `fetch-my-weather` package as a teaching tool in programming courses. It includes suggested lesson plans, learning objectives, and teaching approaches for different skill levels.
 
 ## Teaching Philosophy
 
-The `simple-weather` package was specifically designed to support programming education by providing:
+The `fetch-my-weather` package was specifically designed to support programming education by providing:
 
 1. **Accessible API Interactions**: Students can make real API calls without complex authentication or setup
 2. **Immediate Visual Feedback**: Weather reports provide engaging, meaningful output
@@ -37,21 +37,21 @@ The `simple-weather` package was specifically designed to support programming ed
 ## Suggested Course Integration
 
 ### Python Basics Course (Week 3-4)
-Introduce `simple-weather` after students have learned:
+Introduce `fetch-my-weather` after students have learned:
 - Basic function calls
 - If statements
 - String operations
 - Print statements
 
 ### Web Programming Course
-Use `simple-weather` as an introduction to:
+Use `fetch-my-weather` as an introduction to:
 - API concepts
 - HTTP requests
 - Working with web services
 - Before tackling more complex APIs that require authentication
 
 ### Data Science Introduction
-Incorporate `simple-weather` when teaching:
+Incorporate `fetch-my-weather` when teaching:
 - External data retrieval
 - Data parsing (from text to structured data)
 - Visualization of data
@@ -71,7 +71,7 @@ Incorporate `simple-weather` when teaching:
    - Introduce the weather service concept
 
 2. **Demonstration (15 min)**
-   - Show installation of `simple-weather`
+   - Show installation of `fetch-my-weather`
    - Demonstrate basic weather retrieval
    - Show different locations
 
@@ -142,10 +142,10 @@ Incorporate `simple-weather` when teaching:
 ### Scaffolded Learning
 Start with the simplest form of the API and gradually introduce more parameters:
 
-1. Basic retrieval: `weather = simple_weather.get_weather()`
-2. Add location: `weather = simple_weather.get_weather(location="Tokyo")`
-3. Add view options: `weather = simple_weather.get_weather(location="Tokyo", view_options="q")`
-4. Add units: `weather = simple_weather.get_weather(location="Tokyo", view_options="q", units="u")`
+1. Basic retrieval: `weather = fetch_my_weather.get_weather()`
+2. Add location: `weather = fetch_my_weather.get_weather(location="Tokyo")`
+3. Add view options: `weather = fetch_my_weather.get_weather(location="Tokyo", view_options="q")`
+4. Add units: `weather = fetch_my_weather.get_weather(location="Tokyo", view_options="q", units="u")`
 
 ### Problem-Based Learning
 Present students with problems to solve:
@@ -155,15 +155,15 @@ Present students with problems to solve:
 3. "Design a daily weather reporter that runs automatically"
 
 ### Code Reading Exercises
-Have students read and explain code that uses `simple-weather`:
+Have students read and explain code that uses `fetch-my-weather`:
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 def compare_temperatures(cities):
     results = {}
     for city in cities:
-        weather = simple_weather.get_weather(location=city)
+        weather = fetch_my_weather.get_weather(location=city)
         if isinstance(weather, str) and not weather.startswith("Error:"):
             # Extract temperature from the text (simplistic approach)
             if "°C" in weather:
@@ -188,7 +188,7 @@ Have students work in pairs:
 
 ### Quizzes
 - "What parameter would you use to get weather in Spanish?"
-- "How do you check if an error occurred in a `simple-weather` request?"
+- "How do you check if an error occurred in a `fetch-my-weather` request?"
 - "What is the difference between `units='m'` and `units='u'`?"
 
 ### Coding Challenges
@@ -203,7 +203,7 @@ Have students work in pairs:
 
 ## Ready-to-Use Mini-Projects
 
-We've created a collection of structured mini-projects that are ready to use in your classroom. These projects range from beginner to advanced levels and provide hands-on experience with the `simple-weather` package.
+We've created a collection of structured mini-projects that are ready to use in your classroom. These projects range from beginner to advanced levels and provide hands-on experience with the `fetch-my-weather` package.
 
 Check the `docs/mini-projects/` directory for a complete set of projects including:
 
@@ -227,17 +227,17 @@ Each project includes a detailed description, code samples, and extension ideas 
 
 ## Common Student Questions and Answers
 
-**Q: Why doesn't `simple-weather` raise exceptions like other libraries?**  
+**Q: Why doesn't `fetch-my-weather` raise exceptions like other libraries?**  
 A: It's designed to be beginner-friendly. Checking if a string starts with "Error:" is simpler than try/except blocks for beginners.
 
 **Q: How can I extract specific data (like temperature) from the text output?**  
 A: You can use string operations like `split()` and regular expressions. This is intentionally part of the learning process!
 
 **Q: Is there a limit to how many requests I can make?**  
-A: The underlying weather service may have rate limits. That's why `simple-weather` includes caching to minimize requests. This is a good opportunity to discuss API etiquette.
+A: The underlying weather service may have rate limits. That's why `fetch-my-weather` includes caching to minimize requests. This is a good opportunity to discuss API etiquette.
 
 **Q: Why use this instead of a more advanced weather API?**  
-A: `simple-weather` is specifically designed for learning. It requires no API keys, has minimal setup, and provides a gentle introduction to API concepts.
+A: `fetch-my-weather` is specifically designed for learning. It requires no API keys, has minimal setup, and provides a gentle introduction to API concepts.
 
 ## Additional Resources
 
@@ -255,4 +255,4 @@ A: `simple-weather` is specifically designed for learning. It requires no API ke
 
 ---
 
-This guide is meant to be flexible. Adapt it to your specific teaching context, student level, and course objectives. The `simple-weather` package is intentionally simple but contains enough depth to support multiple lessons and projects of increasing complexity.
+This guide is meant to be flexible. Adapt it to your specific teaching context, student level, and course objectives. The `fetch-my-weather` package is intentionally simple but contains enough depth to support multiple lessons and projects of increasing complexity.

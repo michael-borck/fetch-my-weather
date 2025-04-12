@@ -11,7 +11,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import os
 import platform
 import ctypes
@@ -21,7 +21,7 @@ from datetime import datetime
 
 def get_weather_condition():
     """Get the current weather condition"""
-    weather = simple_weather.get_weather(view_options="0q")
+    weather = fetch_my_weather.get_weather(view_options="0q")
     
     if isinstance(weather, str) and not weather.startswith("Error:"):
         # Simple weather condition detection (could be improved)
@@ -80,7 +80,7 @@ def change_wallpaper_based_on_weather():
         temp_file = os.path.join(tempfile.gettempdir(), f"weather_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
         
         # Get current weather as PNG with padding for better wallpaper fit
-        weather_png = simple_weather.get_weather(is_png=True, png_options="p")
+        weather_png = fetch_my_weather.get_weather(is_png=True, png_options="p")
         
         if isinstance(weather_png, bytes):
             with open(temp_file, "wb") as f:
@@ -99,7 +99,7 @@ def change_wallpaper_based_on_weather():
         temp_file = os.path.join(tempfile.gettempdir(), f"weather_{condition}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
         
         # Get current weather as PNG
-        weather_png = simple_weather.get_weather(is_png=True, png_options="p")
+        weather_png = fetch_my_weather.get_weather(is_png=True, png_options="p")
         
         if isinstance(weather_png, bytes):
             with open(temp_file, "wb") as f:

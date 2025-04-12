@@ -10,7 +10,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import os
 from datetime import datetime
 
@@ -25,7 +25,7 @@ def save_weather_image(location, save_directory="weather_images"):
     
     # Get the weather as PNG
     print(f"Getting weather for {location}...")
-    weather_png = simple_weather.get_weather(location=location, is_png=True)
+    weather_png = fetch_my_weather.get_weather(location=location, is_png=True)
     
     # Check if we got an error
     if not isinstance(weather_png, bytes):

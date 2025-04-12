@@ -11,7 +11,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import time
 import json
 import os
@@ -106,7 +106,7 @@ def check_weather_alerts():
     today = datetime.now().strftime("%Y-%m-%d")
     
     # Get current weather
-    weather = simple_weather.get_weather(location=location, view_options="q")
+    weather = fetch_my_weather.get_weather(location=location, view_options="q")
     
     if isinstance(weather, str) and not weather.startswith("Error:"):
         alerts_triggered = []

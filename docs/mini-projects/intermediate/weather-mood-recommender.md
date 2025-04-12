@@ -10,7 +10,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import random
 
 # Activities based on weather conditions
@@ -25,7 +25,7 @@ activities = {
 
 def recommend_activity(location=""):
     # Get weather data
-    weather_data = simple_weather.get_weather(location=location, view_options="q")
+    weather_data = fetch_my_weather.get_weather(location=location, view_options="q")
     
     if isinstance(weather_data, str) and not weather_data.startswith("Error:"):
         # Determine weather condition (this is a simplified approach)

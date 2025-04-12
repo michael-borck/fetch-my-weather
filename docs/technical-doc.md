@@ -1,15 +1,15 @@
-# Technical Documentation for simple-weather
+# Technical Documentation for fetch-my-weather
 
-This document provides technical details about the implementation of the `simple-weather` package. It's intended for developers who want to understand the internal workings of the package or who might want to contribute to its development.
+This document provides technical details about the implementation of the `fetch-my-weather` package. It's intended for developers who want to understand the internal workings of the package or who might want to contribute to its development.
 
 ## Architecture Overview
 
-`simple-weather` is intentionally designed with a simple, flat architecture consisting of a small number of public functions and a few private helper functions.
+`fetch-my-weather` is intentionally designed with a simple, flat architecture consisting of a small number of public functions and a few private helper functions.
 
 ### File Structure
 
 ```
-src/simple_weather/
+src/fetch_my_weather/
 ├── __init__.py      # Exports public API
 └── core.py          # Core implementation
 ```

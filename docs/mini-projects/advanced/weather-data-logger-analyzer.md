@@ -11,7 +11,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import csv
 import os
 import time
@@ -72,7 +72,7 @@ class WeatherLogger:
     def log_current_weather(self):
         """Get current weather and log it to CSV"""
         # Get current weather
-        weather = simple_weather.get_weather(location=self.location, view_options="q")
+        weather = fetch_my_weather.get_weather(location=self.location, view_options="q")
         
         if isinstance(weather, str) and not weather.startswith("Error:"):
             # Extract data points

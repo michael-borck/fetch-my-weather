@@ -11,7 +11,7 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 import random
 import time
 import os
@@ -42,7 +42,7 @@ class WeatherGame:
         """Get real-world weather and set game environment"""
         print("Connecting to weather service to generate your world...")
         
-        weather_text = simple_weather.get_weather(location=location, view_options="q")
+        weather_text = fetch_my_weather.get_weather(location=location, view_options="q")
         
         if isinstance(weather_text, str) and not weather_text.startswith("Error:"):
             # Extract key weather information

@@ -10,11 +10,11 @@
 **Sample code:**
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 def show_my_weather():
     # Get current location weather
-    weather = simple_weather.get_weather(view_options="q")
+    weather = fetch_my_weather.get_weather(view_options="q")
     
     # Print a nice header
     print("=" * 50)

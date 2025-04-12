@@ -1,6 +1,6 @@
-# Design Philosophy of simple-weather
+# Design Philosophy of fetch-my-weather
 
-This document explains the design decisions behind the `simple-weather` package, focusing on educational principles, simplicity, and accessibility.
+This document explains the design decisions behind the `fetch-my-weather` package, focusing on educational principles, simplicity, and accessibility.
 
 ## Core Design Principles
 
@@ -61,7 +61,7 @@ get_weather(location="", units="", view_options="", lang=None,
 
 ### Why Return Strings, Not Objects?
 
-Unlike many modern API wrappers, `simple-weather` returns plain text strings or raw bytes instead of parsed data structures.
+Unlike many modern API wrappers, `fetch-my-weather` returns plain text strings or raw bytes instead of parsed data structures.
 
 **Rationale:**
 - Output is immediately useful without further processing
@@ -128,7 +128,7 @@ Each component of the package offers specific educational opportunities:
 
 ## Comparisons with Alternatives
 
-The design of `simple-weather` differs from many modern API wrappers and weather libraries:
+The design of `fetch-my-weather` differs from many modern API wrappers and weather libraries:
 
 ### Compared to Type-Safe, Model-Based Wrappers (like existing pywttr):
 - Simpler return types (strings vs. nested objects)
@@ -156,4 +156,4 @@ While maintaining the educational focus, future versions might consider:
 
 ## Conclusion
 
-The design of `simple-weather` deliberately prioritizes educational value, beginner accessibility, and conceptual clarity over advanced features, optimal performance, or industrial robustness. This makes it an ideal tool for teaching basic concepts of API interaction, network requests, and data handling in Python.
+The design of `fetch-my-weather` deliberately prioritizes educational value, beginner accessibility, and conceptual clarity over advanced features, optimal performance, or industrial robustness. This makes it an ideal tool for teaching basic concepts of API interaction, network requests, and data handling in Python.
