@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/LICENSE/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/LICENSE/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/design-doc/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/design-doc/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/publishing-guide/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/publishing-guide/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/teaching-guide/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/teaching-guide/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/technical-doc/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/technical-doc/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/user-guide/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/user-guide/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/advanced/weather-data-logger-analyzer/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/advanced/weather-data-logger-analyzer/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/advanced/weather-game-world-generator/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/advanced/weather-game-world-generator/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/advanced/weather-home-automation/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/advanced/weather-home-automation/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/advanced/weather-notification-system/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/advanced/weather-notification-system/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/beginner/multi-city-weather-checker/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/beginner/multi-city-weather-checker/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/beginner/personal-weather-dashboard/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/beginner/personal-weather-dashboard/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/beginner/weather-image-saver/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/beginner/weather-image-saver/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/intermediate/weather-based-wallpaper-changer/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/intermediate/weather-based-wallpaper-changer/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/intermediate/weather-mood-recommender/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/intermediate/weather-mood-recommender/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
     <url>
-         <loc>https://michael-borck.github.io/simple-weather/mini-projects/intermediate/weekly-weather-forecast-tracker/</loc>
+         <loc>https://michael-borck.github.io/fetch-my-weather/mini-projects/intermediate/weekly-weather-forecast-tracker/</loc>
          <lastmod>2025-04-12</lastmod>
     </url>
 </urlset>
