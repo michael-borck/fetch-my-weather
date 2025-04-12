@@ -290,6 +290,28 @@ This package is ideal for:
 - Demonstrating data retrieval and display
 - Learning about caching and performance optimization
 
+## Mini-Projects
+
+To help you get started with practical applications, we've included a collection of mini-projects in the `docs/mini-projects/` directory. These are organized by difficulty level:
+
+### Beginner Projects
+- **Personal Weather Dashboard**: Simple program showing weather for your location
+- **Multi-City Weather Checker**: Compare weather across multiple cities
+- **Weather Image Saver**: Save weather data as PNG images
+
+### Intermediate Projects
+- **Weather Mood Recommender**: Get activity suggestions based on current weather
+- **Weekly Weather Forecast Tracker**: Track and compare forecasts with actual weather
+- **Weather-based Wallpaper Changer**: Change your desktop wallpaper based on weather
+
+### Advanced Projects
+- **Weather Notification System**: Get alerts for specific weather conditions
+- **Weather Data Logger and Analyzer**: Track and visualize weather data over time
+- **Weather-Based Home Automation**: Control smart home devices based on weather
+- **Weather-based Game World Generator**: Create games that adapt to real-world weather
+
+Each project includes full code samples and instructions. They're perfect for learning or teaching Python with real-world applications.
+
 ---
 
 We hope you enjoy using `simple_weather`! If you have any questions or suggestions, please feel free to open an issue on our GitHub repository.

@@ -48,6 +48,16 @@ simple-weather is designed as a teaching tool for:
 - Understanding URL construction and query parameters
 - Processing and displaying weather data in applications
 
+### Mini-Projects
+
+The package includes a collection of ready-to-use mini-projects in the `docs/mini-projects/` directory:
+
+- **Beginner projects**: Weather dashboard, multi-city checker, image saver
+- **Intermediate projects**: Weather-based recommendations, forecast tracking, wallpaper changer
+- **Advanced projects**: Notification system, data analyzer, home automation, weather-based game
+
+These projects provide practical examples and serve as great teaching resources or starting points for your own applications.
+
 ## Usage Guide
 
 ### Getting Weather Data

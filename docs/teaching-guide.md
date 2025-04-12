@@ -201,6 +201,30 @@ Have students work in pairs:
 - "Weather around the world" dashboard
 - Command-line weather utility with various options
 
+## Ready-to-Use Mini-Projects
+
+We've created a collection of structured mini-projects that are ready to use in your classroom. These projects range from beginner to advanced levels and provide hands-on experience with the `simple-weather` package.
+
+Check the `docs/mini-projects/` directory for a complete set of projects including:
+
+### Beginner Level
+- Personal Weather Dashboard - Create a simple console-based weather display
+- Multi-City Weather Checker - Compare weather across multiple cities
+- Weather Image Saver - Save weather data as PNG images
+
+### Intermediate Level
+- Weather Mood Recommender - Get activity suggestions based on current weather
+- Weekly Weather Forecast Tracker - Track and compare forecasts with actual weather
+- Weather-based Wallpaper Changer - Automatically change desktop wallpaper based on weather
+
+### Advanced Level
+- Weather Notification System - Send alerts when specific weather conditions occur
+- Weather Data Logger and Analyzer - Track and analyze weather data with visualizations
+- Weather-Based Home Automation - Control smart home devices based on weather conditions
+- Weather-based Game World Generator - Create a game that adapts to real-world weather
+
+Each project includes a detailed description, code samples, and extension ideas for further learning.
+
 ## Common Student Questions and Answers
 
 **Q: Why doesn't `simple-weather` raise exceptions like other libraries?**  
