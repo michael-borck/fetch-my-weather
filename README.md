@@ -181,6 +181,10 @@ The documentation includes:
 
 MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Contributors
+
+This project is maintained by [Michael Borck](https://github.com/michael-borck) with contributions from various individuals. See [AUTHORS.md](AUTHORS.md) for a complete list of contributors.
+
 ## Acknowledgments
 
 This package is a wrapper around the amazing [wttr.in](https://github.com/chubin/wttr.in) service created by [Igor Chubin](https://github.com/chubin). Please be respectful of the wttr.in service by not making too many requests.
