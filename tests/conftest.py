@@ -1,5 +1,5 @@
 """
-Pytest configuration file for simple-weather tests.
+Pytest configuration file for fetch-my-weather tests.
 """
 
 from typing import Iterator
@@ -16,7 +16,7 @@ def reset_cache() -> Iterator[None]:
     It ensures that tests don't affect each other through cached data.
     """
     # Import here to avoid circular imports
-    from simple_weather.core import clear_cache, set_cache_duration
+    from fetch_my_weather.core import clear_cache, set_cache_duration
 
     # Store original cache duration
     original_duration = set_cache_duration(600)

@@ -1,5 +1,5 @@
 """
-Core functionality for simple_weather - A beginner-friendly Python package for weather data.
+Core functionality for fetch_my_weather - A beginner-friendly Python package for weather data.
 
 This module provides the main functions for fetching weather data and moon phases,
 with built-in caching and error handling to make it suitable for educational use.
@@ -13,7 +13,7 @@ import requests
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
 _CACHE_DURATION_SECONDS = 600  # Cache data for 10 minutes
-_USER_AGENT = "simple-weather/0.1.0"  # Be polite and identify our package
+_USER_AGENT = "fetch-my-weather/0.1.1"  # Be polite and identify our package
 
 # --- In-memory Cache ---
 # Simple dictionary to store cached responses

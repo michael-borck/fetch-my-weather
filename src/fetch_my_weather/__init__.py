@@ -1,12 +1,12 @@
 """
-simple_weather - A beginner-friendly Python package for fetching weather data.
+fetch-my-weather - A beginner-friendly Python package for fetching weather data.
 
 This package provides simple functions to fetch weather data and moon phases
 from weather services, with built-in caching and error handling to make it suitable
 for educational use.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .core import clear_cache, get_weather, set_cache_duration, set_user_agent
 

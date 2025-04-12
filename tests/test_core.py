@@ -1,5 +1,5 @@
 """
-Tests for the core functionality of the simple-weather package.
+Tests for the core functionality of the fetch-my-weather package.
 """
 
 import time
@@ -7,7 +7,7 @@ import time
 from pytest_mock import MockerFixture
 
 # Import the package
-from simple_weather.core import (
+from fetch_my_weather.core import (
     _build_url,
     _cache,
     clear_cache,

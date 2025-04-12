@@ -53,4 +53,5 @@ venv.bak/
 # OS specific
 .DS_Store
 Thumbs.db
-EOF < /dev/null
+EOF < /dev/nulltest-env/
+test-env-pypi/

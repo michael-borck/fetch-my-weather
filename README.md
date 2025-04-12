@@ -1,4 +1,4 @@
-# simple-weather
+# fetch-my-weather
 
 A beginner-friendly Python package for fetching weather data, designed for educational use.
 
@@ -16,30 +16,30 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 ## Installation
 
 ```bash
-pip install simple-weather
+pip install fetch-my-weather
 ```
 
 ## Quick Start
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 # Get weather for your current location (based on IP)
-current_weather = simple_weather.get_weather()
+current_weather = fetch_my_weather.get_weather()
 print(current_weather)
 
 # Get weather for Berlin in metric units
-berlin_weather = simple_weather.get_weather(location="Berlin", units="m")
+berlin_weather = fetch_my_weather.get_weather(location="Berlin", units="m")
 print(berlin_weather)
 
 # Get moon phase for a specific date
-moon = simple_weather.get_weather(is_moon=True, moon_date="2025-07-04")
+moon = fetch_my_weather.get_weather(is_moon=True, moon_date="2025-07-04")
 print(moon)
 ```
 
 ## Teaching Applications
 
-simple-weather is designed as a teaching tool for:
+fetch-my-weather is designed as a teaching tool for:
 
 - Introducing API interactions in a beginner-friendly way
 - Demonstrating HTTP requests without exception handling complexity
@@ -63,86 +63,86 @@ These projects provide practical examples and serve as great teaching resources 
 ### Getting Weather Data
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 # Basic usage - current location
-weather = simple_weather.get_weather()
+weather = fetch_my_weather.get_weather()
 
 # Specific location
-nyc_weather = simple_weather.get_weather(location="New York")
+nyc_weather = fetch_my_weather.get_weather(location="New York")
 
 # Airport code
-lax_weather = simple_weather.get_weather(location="lax")
+lax_weather = fetch_my_weather.get_weather(location="lax")
 
 # Geographic coordinates
-coord_weather = simple_weather.get_weather(location="48.8567,2.3508")
+coord_weather = fetch_my_weather.get_weather(location="48.8567,2.3508")
 
 # Compact view
-compact_weather = simple_weather.get_weather(view_options="0")
+compact_weather = fetch_my_weather.get_weather(view_options="0")
 
 # Compact view + quiet (no city name in header)
-compact_quiet = simple_weather.get_weather(view_options="0q")
+compact_quiet = fetch_my_weather.get_weather(view_options="0q")
 
 # Units: metric (default), USCS (u), or wind in m/s (M)
-us_units = simple_weather.get_weather(units="u")
+us_units = fetch_my_weather.get_weather(units="u")
 
 # Different language
-spanish = simple_weather.get_weather(lang="es")
+spanish = fetch_my_weather.get_weather(lang="es")
 ```
 
 ### Getting Moon Phase Data
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 # Current moon phase
-moon = simple_weather.get_weather(is_moon=True)
+moon = fetch_my_weather.get_weather(is_moon=True)
 
 # Moon phase for specific date
-christmas_moon = simple_weather.get_weather(is_moon=True, moon_date="2025-12-25")
+christmas_moon = fetch_my_weather.get_weather(is_moon=True, moon_date="2025-12-25")
 
 # Moon with location hint (affects timing)
-paris_moon = simple_weather.get_weather(is_moon=True, moon_location_hint=",+Paris")
+paris_moon = fetch_my_weather.get_weather(is_moon=True, moon_location_hint=",+Paris")
 ```
 
 ### Getting PNG Weather Images
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 # Weather as PNG (returns bytes)
-london_png = simple_weather.get_weather(location="London", is_png=True)
+london_png = fetch_my_weather.get_weather(location="London", is_png=True)
 
 # Save PNG to file
 with open("london_weather.png", "wb") as f:
     f.write(london_png)
 
 # PNG with options (transparency)
-transparent_png = simple_weather.get_weather(location="Tokyo", is_png=True, png_options="t")
+transparent_png = fetch_my_weather.get_weather(location="Tokyo", is_png=True, png_options="t")
 ```
 
 ### Configuration Settings
 
 ```python
-import simple_weather
+import fetch_my_weather
 
 # Change cache duration (in seconds, 0 to disable)
-simple_weather.set_cache_duration(1800)  # 30 minutes
+fetch_my_weather.set_cache_duration(1800)  # 30 minutes
 
 # Clear the cache
-simple_weather.clear_cache()
+fetch_my_weather.clear_cache()
 
 # Set a custom user agent
-simple_weather.set_user_agent("My Weather App v1.0")
+fetch_my_weather.set_user_agent("My Weather App v1.0")
 ```
 
 ### Error Handling
 
 ```python
-import simple_weather
+import fetch_my_weather
 
-# simple-weather never raises exceptions, it returns error messages as strings
-result = simple_weather.get_weather(location="NonExistentPlace12345")
+# fetch-my-weather never raises exceptions, it returns error messages as strings
+result = fetch_my_weather.get_weather(location="NonExistentPlace12345")
 
 # Check if result is an error message
 if isinstance(result, str) and result.startswith("Error:"):
@@ -169,13 +169,13 @@ The `get_weather()` function accepts these parameters:
 
 ## Documentation
 
-📚 **Full documentation is now live at [michael-borck.github.io/simple-weather](https://michael-borck.github.io/simple-weather/)!**
+📚 **Full documentation is now live at [michael-borck.github.io/fetch-my-weather](https://michael-borck.github.io/fetch-my-weather/)!**
 
 The documentation includes:
-- 📘 Detailed [user guide](https://michael-borck.github.io/simple-weather/user-guide/) with examples
-- 🛠️ [Mini-projects](https://michael-borck.github.io/simple-weather/mini-projects/README/) for learning (beginner to advanced)
-- 🎓 [Teaching resources](https://michael-borck.github.io/simple-weather/teaching-guide/) for educators
-- 📋 [Technical documentation](https://michael-borck.github.io/simple-weather/technical-doc/) for developers
+- 📘 Detailed [user guide](https://michael-borck.github.io/fetch-my-weather/user-guide/) with examples
+- 🛠️ [Mini-projects](https://michael-borck.github.io/fetch-my-weather/mini-projects/README/) for learning (beginner to advanced)
+- 🎓 [Teaching resources](https://michael-borck.github.io/fetch-my-weather/teaching-guide/) for educators
+- 📋 [Technical documentation](https://michael-borck.github.io/fetch-my-weather/technical-doc/) for developers
 
 ## License
 
