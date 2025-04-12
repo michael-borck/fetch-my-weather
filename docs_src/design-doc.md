@@ -1,1 +1,0 @@
-/home/michael/Projects/github-repos/projects/simple-weather/docs/design-doc.md

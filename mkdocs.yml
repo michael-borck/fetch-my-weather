@@ -4,7 +4,7 @@ site_url: https://michael-borck.github.io/simple-weather/
 repo_url: https://github.com/michael-borck/simple-weather
 repo_name: michael-borck/simple-weather
 
-docs_dir: docs_src
+docs_dir: docs
 site_dir: site
 
 theme:

@@ -1,4 +1,4 @@
-.PHONY: clean lint format type-check test build publish-test publish help
+.PHONY: clean lint format type-check test build publish-test publish docs-serve docs-build docs-deploy help
 
 help:
 	@echo "Available commands:"
@@ -10,9 +10,12 @@ help:
 	@echo "  make build       - Build package distribution files"
 	@echo "  make publish-test- Publish to TestPyPI"
 	@echo "  make publish     - Publish to PyPI"
+	@echo "  make docs-serve  - Serve MkDocs documentation locally"
+	@echo "  make docs-build  - Build MkDocs documentation site"
+	@echo "  make docs-deploy - Deploy documentation to GitHub Pages"
 
 clean:
-	rm -rf build dist *.egg-info
+	rm -rf build dist *.egg-info site
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
 	find . -type d -name .ruff_cache -exec rm -rf {} +
@@ -39,3 +42,12 @@ publish-test: build
 
 publish: build
 	twine upload dist/*
+
+docs-serve:
+	mkdocs serve
+
+docs-build:
+	mkdocs build
+
+docs-deploy:
+	mkdocs gh-deploy --force
