@@ -167,6 +167,16 @@ The `get_weather()` function accepts these parameters:
 | `moon_date` | str | Date for moon phase in `YYYY-MM-DD` format (with `is_moon=True`) |
 | `moon_location_hint` | str | Location hint for moon phase (e.g., `,+US`, `,+Paris`) |
 
+## Documentation
+
+Full documentation is available at [michael-borck.github.io/simple-weather](https://michael-borck.github.io/simple-weather/).
+
+The documentation includes:
+- Detailed user guide
+- Mini-projects for learning
+- Teaching resources
+- Technical documentation
+
 ## License
 
 MIT License - see the [LICENSE](LICENSE) file for details.

@@ -1,0 +1,100 @@
+site_name: Simple Weather
+site_description: A beginner-friendly Python package for fetching weather data, designed for educational use
+site_url: https://michael-borck.github.io/simple-weather/
+repo_url: https://github.com/michael-borck/simple-weather
+repo_name: michael-borck/simple-weather
+
+docs_dir: docs_src
+site_dir: site
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - User Guide: user-guide.md
+  - Mini-Projects:
+    - Overview: mini-projects/README.md
+    - Beginner:
+      - Personal Weather Dashboard: mini-projects/beginner/personal-weather-dashboard.md
+      - Multi-City Weather Checker: mini-projects/beginner/multi-city-weather-checker.md 
+      - Weather Image Saver: mini-projects/beginner/weather-image-saver.md
+    - Intermediate:
+      - Weather Mood Recommender: mini-projects/intermediate/weather-mood-recommender.md
+      - Weekly Weather Forecast Tracker: mini-projects/intermediate/weekly-weather-forecast-tracker.md
+      - Weather-based Wallpaper Changer: mini-projects/intermediate/weather-based-wallpaper-changer.md
+    - Advanced:
+      - Weather Notification System: mini-projects/advanced/weather-notification-system.md
+      - Weather Data Logger and Analyzer: mini-projects/advanced/weather-data-logger-analyzer.md
+      - Weather-Based Home Automation: mini-projects/advanced/weather-home-automation.md
+      - Weather-based Game World Generator: mini-projects/advanced/weather-game-world-generator.md
+  - Teaching Guide: teaching-guide.md
+  - Technical Documentation: technical-doc.md
+  - Design Document: design-doc.md
+  - Publishing Guide: publishing-guide.md
+  - License: LICENSE.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_submodules: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/michael-borck/simple-weather
+      name: Simple Weather on GitHub

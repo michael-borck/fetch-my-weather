@@ -1,0 +1,1 @@
+/home/michael/Projects/github-repos/projects/simple-weather/docs/publishing-guide.md
