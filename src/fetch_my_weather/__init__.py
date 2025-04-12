@@ -6,7 +6,7 @@ from weather services, with built-in caching and error handling to make it suita
 for educational use.
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from .core import clear_cache, get_weather, set_cache_duration, set_user_agent
 

@@ -13,7 +13,7 @@ import requests
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
 _CACHE_DURATION_SECONDS = 600  # Cache data for 10 minutes
-_USER_AGENT = "fetch-my-weather/0.1.1"  # Be polite and identify our package
+_USER_AGENT = "fetch-my-weather/0.1.2"  # Be polite and identify our package
 
 # --- In-memory Cache ---
 # Simple dictionary to store cached responses

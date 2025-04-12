@@ -7,7 +7,7 @@ universal = 1
 
 [project]
 name = "fetch-my-weather"
-version = "0.1.1"
+version = "0.1.2"
 description = "A beginner-friendly Python package for fetching weather data, designed for educational use."
 readme = "README.md"
 authors = [{name = "Your Name", email = "your.email@example.com"}]
@@ -26,8 +26,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/simple-weather"
-Issues = "https://github.com/yourusername/simple-weather/issues"
+Homepage = "https://github.com/michael-borck/fetch-my-weather"
+Issues = "https://github.com/michael-borck/fetch-my-weather/issues"
 
 [project.optional-dependencies]
 dev = [
