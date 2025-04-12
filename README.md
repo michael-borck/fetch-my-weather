@@ -169,13 +169,13 @@ The `get_weather()` function accepts these parameters:
 
 ## Documentation
 
-Full documentation is available at [michael-borck.github.io/simple-weather](https://michael-borck.github.io/simple-weather/).
+📚 **Full documentation is now live at [michael-borck.github.io/simple-weather](https://michael-borck.github.io/simple-weather/)!**
 
 The documentation includes:
-- Detailed user guide
-- Mini-projects for learning
-- Teaching resources
-- Technical documentation
+- 📘 Detailed [user guide](https://michael-borck.github.io/simple-weather/user-guide/) with examples
+- 🛠️ [Mini-projects](https://michael-borck.github.io/simple-weather/mini-projects/README/) for learning (beginner to advanced)
+- 🎓 [Teaching resources](https://michael-borck.github.io/simple-weather/teaching-guide/) for educators
+- 📋 [Technical documentation](https://michael-borck.github.io/simple-weather/technical-doc/) for developers
 
 ## License
 
