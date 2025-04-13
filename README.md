@@ -12,6 +12,7 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 - 🚀 Built-in caching to be nice to the wttr.in service
 - 🛡️ Beginner-friendly error handling (no exceptions)
 - 📚 Designed for teaching Python and API interactions
+- 🤖 LLM-ready with comprehensive [LLM guide](LLM-GUIDE.md) you can upload to AI assistants
 
 ## Installation
 
@@ -176,6 +177,15 @@ The documentation includes:
 - 🛠️ [Mini-projects](https://michael-borck.github.io/fetch-my-weather/mini-projects/README/) for learning (beginner to advanced)
 - 🎓 [Teaching resources](https://michael-borck.github.io/fetch-my-weather/teaching-guide/) for educators
 - 📋 [Technical documentation](https://michael-borck.github.io/fetch-my-weather/technical-doc/) for developers
+
+## AI Assistant Integration
+
+🤖 This package includes an [LLM guide](LLM-GUIDE.md) specifically designed for AI assistants.
+
+To use with AI assistants:
+1. Download the [LLM-GUIDE.md](LLM-GUIDE.md) file
+2. Upload it to your AI assistant (like Claude, ChatGPT, etc.)
+3. The AI can now help you use the package more effectively
 
 ## License
 
