@@ -17,7 +17,9 @@ def main() -> None:
 
     # Example 1: Current location weather as Pydantic model (based on IP)
     print("Example 1: Current location weather as Pydantic model (based on IP)")
-    weather = fetch_my_weather.get_weather()  # Default format is now 'json' which returns Pydantic model
+    weather = (
+        fetch_my_weather.get_weather()
+    )  # Default format is now 'json' which returns Pydantic model
     if hasattr(weather, "current_condition"):
         print("Weather data received as Pydantic model:")
         # Extract some key information using Pydantic model property access
@@ -54,15 +56,15 @@ def main() -> None:
         "current_condition": [
             {
                 "temp_C": "17",
-                "temp_F": "63", 
+                "temp_F": "63",
                 "weatherDesc": [{"value": "Partly cloudy"}],
                 "humidity": "71",
                 "windspeedKmph": "11",
-                "winddir16Point": "NE"
+                "winddir16Point": "NE",
             }
         ]
     }
-    
+
     print("Weather data received as raw JSON (Python dictionary):")
     # Extract some key information from the JSON
     if "current_condition" in raw_weather and raw_weather["current_condition"]:
@@ -70,9 +72,7 @@ def main() -> None:
         print(
             f"Temperature: {current.get('temp_C', 'N/A')}°C / {current.get('temp_F', 'N/A')}°F"
         )
-        print(
-            f"Condition: {current.get('weatherDesc', [{}])[0].get('value', 'N/A')}"
-        )
+        print(f"Condition: {current.get('weatherDesc', [{}])[0].get('value', 'N/A')}")
         print(f"Humidity: {current.get('humidity', 'N/A')}%")
         print(
             f"Wind: {current.get('windspeedKmph', 'N/A')} km/h, {current.get('winddir16Point', 'N/A')}"
@@ -81,7 +81,7 @@ def main() -> None:
     # Print the full JSON for reference (pretty-printed)
     print("\nFull raw JSON response:")
     print(json.dumps(raw_weather, indent=2))
-    
+
     # Note: With a real API call outside of mock mode, you would use:
     # raw_weather = fetch_my_weather.get_weather(format="raw_json")
     # which returns a Python dictionary without Pydantic model conversion

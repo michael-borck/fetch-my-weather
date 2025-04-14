@@ -17,7 +17,7 @@ from .models import WeatherResponse
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
 _CACHE_DURATION_SECONDS = 600  # Cache data for 10 minutes
-_USER_AGENT = "fetch-my-weather/0.2.1"  # Be polite and identify our package
+_USER_AGENT = "fetch-my-weather/0.2.2"  # Be polite and identify our package
 _USE_MOCK_DATA = False  # Flag to use mock data instead of real API
 
 # --- In-memory Cache ---
@@ -339,7 +339,9 @@ def _get_from_cache(url: str) -> str | bytes | dict[str, Any] | WeatherResponse 
     return None
 
 
-def _add_to_cache(url: str, data: str | bytes | dict[str, Any] | WeatherResponse) -> None:
+def _add_to_cache(
+    url: str, data: str | bytes | dict[str, Any] | WeatherResponse
+) -> None:
     """
     Adds data to the cache with current timestamp.
 
@@ -435,7 +437,9 @@ def get_weather(
                 model_data: WeatherResponse = WeatherResponse.parse_obj(json_data)
                 return model_data
             except ValidationError:
-                error_msg: str = "Error: Mock data doesn't match the expected model structure"
+                error_msg: str = (
+                    "Error: Mock data doesn't match the expected model structure"
+                )
                 return error_msg
         elif format == "raw_json":
             # Return the raw JSON as a dictionary without Pydantic conversion
@@ -486,10 +490,14 @@ def get_weather(
                     return raw_dict
                 # If format is json, convert to WeatherResponse
                 try:
-                    cached_model: WeatherResponse = WeatherResponse.parse_obj(cached_data)
+                    cached_model: WeatherResponse = WeatherResponse.parse_obj(
+                        cached_data
+                    )
                     return cached_model
                 except ValidationError:
-                    struct_error: str = "Error: Cached data doesn't match the expected model structure"
+                    struct_error: str = (
+                        "Error: Cached data doesn't match the expected model structure"
+                    )
                     return struct_error
         # Handle other formats or types
         if isinstance(cached_data, str):
@@ -536,7 +544,9 @@ def get_weather(
 
                     # For standard json, convert to Pydantic model
                     try:
-                        weather_response: WeatherResponse = WeatherResponse.parse_obj(json_data)
+                        weather_response: WeatherResponse = WeatherResponse.parse_obj(
+                            json_data
+                        )
                         return weather_response
                     except ValidationError as e:
                         validation_error: str = f"Error: JSON data doesn't match the expected model structure: {str(e)}"
@@ -564,6 +574,30 @@ def get_weather(
                     error_message += f"\nResponse body (start): {error_details}"
             except Exception:
                 pass  # Ignore errors trying to get error details
+
+            # If this is a 503 rate limit error and format is json, return a mock response instead
+            if response.status_code == 503 and (
+                format == "json" or format == "raw_json"
+            ):
+                # Provide a mock response with a note about rate limiting
+                if format == "raw_json":
+                    # Make a deep copy and add a note about it being mock data
+                    mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
+                    mock_data["note"] = "Mock data provided due to rate limiting"
+                    raw_json_data: dict[str, Any] = mock_data
+                    return raw_json_data
+                else:
+                    # Convert mock data to Pydantic model
+                    try:
+                        mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
+                        mock_weather_response: WeatherResponse = WeatherResponse.parse_obj(
+                            mock_data
+                        )
+                        return mock_weather_response
+                    except ValidationError:
+                        # If model conversion fails, still return the error message
+                        pass
+
             return error_message
 
     except Exception as e:

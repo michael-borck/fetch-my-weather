@@ -165,4 +165,3 @@ class WeatherResponse(BaseModel):
     nearest_area: List[NearestArea] = Field(default_factory=list)
     request: List[Request] = Field(default_factory=list)
     weather: List[DailyForecast] = Field(default_factory=list)
-

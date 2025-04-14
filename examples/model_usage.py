@@ -33,7 +33,7 @@ def main() -> None:
 
     # Example 1b: Get raw JSON weather data
     print("\nExample 1b: Get raw JSON weather data")
-    # For the example, we'll create a sample JSON dictionary instead 
+    # For the example, we'll create a sample JSON dictionary instead
     # of relying on the API call that returns differently in mock mode
     raw_weather = {
         "current_condition": [
@@ -43,7 +43,7 @@ def main() -> None:
                 "weatherDesc": [{"value": "Partly cloudy"}],
                 "humidity": "71",
                 "windspeedKmph": "11",
-                "winddir16Point": "NE"
+                "winddir16Point": "NE",
             }
         ]
     }

@@ -232,6 +232,21 @@ else:
         print(f"Temperature: {result.current_condition[0].temp_C}°C")
 ```
 
+### Rate Limiting Fallback
+
+When encountering a 503 status code from wttr.in (typically indicating rate limiting), the package will automatically return mock data when using JSON formats:
+
+```python
+# Even during rate limiting, this returns a valid Pydantic model instead of an error
+weather = fetch_my_weather.get_weather(location="London")
+
+# Access data as normal - it's valid mock data instead of an error string
+if weather.current_condition:
+    print(f"Temperature: {weather.current_condition[0].temp_C}°C")
+```
+
+This makes the package more resilient during educational use, such as when multiple students are accessing the service simultaneously.
+
 ## Architecture Details
 
 The package has a modular architecture:

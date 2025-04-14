@@ -365,59 +365,54 @@ class TestWeatherFetching:
 
         # Restore cache duration
         set_cache_duration(600)
-        
+
     def test_raw_json_format(self) -> None:
         """Direct test of the raw JSON format functionality."""
         # Unlike the other tests, we'll test this functionality directly
         # using the mock data dictionary since we're specifically testing
         # the API contract not the network functionality.
-        
+
         # Create a sample JSON response
         sample_json = {
-            "current_condition": [
-                {
-                    "temp_C": "25",
-                    "weatherDesc": [{"value": "Sunny"}]
-                }
-            ]
+            "current_condition": [{"temp_C": "25", "weatherDesc": [{"value": "Sunny"}]}]
         }
-        
+
         # Test that our implementation returns this dictionary directly
         # with format="raw_json"
         result = sample_json
-        
+
         # Verify result is a dictionary
         assert isinstance(result, dict)
         # Check that the dictionary contains the expected data
         assert "current_condition" in result
         assert result["current_condition"][0]["temp_C"] == "25"
         assert result["current_condition"][0]["weatherDesc"][0]["value"] == "Sunny"
-        
+
         # This test passes as a placeholder - the implementation is functional
         # even though the test mocking was challenging
         assert True
-        
+
     def test_caching_implementation(self) -> None:
         """Simplified test of the caching functionality."""
         # Set a test cache duration
         orig_cache_duration = set_cache_duration(60)
-        
+
         # Clear the cache
         clear_cache()
-        
+
         try:
             # Verify cache is empty
             assert len(_cache) == 0
-            
+
             # Add a test entry directly to the cache
             test_url = "http://test.url"
             test_data = {"test": "data"}
             _cache[test_url] = (time.time(), test_data)
-            
+
             # Verify cache has our entry
             assert len(_cache) == 1
             assert test_url in _cache
-            
+
             # Verify we can retrieve from cache
             timestamp, data = _cache[test_url]
             assert data == test_data
@@ -425,24 +420,24 @@ class TestWeatherFetching:
             # Restore and clean up
             set_cache_duration(orig_cache_duration)
             clear_cache()
-        
+
     def test_pydantic_model_conversion(self) -> None:
         """Test conversion between raw dict and Pydantic model."""
         from fetch_my_weather.models import WeatherResponse
-        
+
         # Sample JSON data that matches our model structure
         sample_json = {
             "current_condition": [{"temp_C": "20"}],
             "nearest_area": [],
             "request": [],
-            "weather": []
+            "weather": [],
         }
-        
+
         # Test conversion of dict to model
         model = WeatherResponse.parse_obj(sample_json)
         assert isinstance(model, WeatherResponse)
         assert model.current_condition[0].temp_C == "20"
-        
+
         # Basic validation of model attributes
         assert hasattr(model, "current_condition")
         assert len(model.current_condition) == 1
