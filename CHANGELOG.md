@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added automatic fallback to mock data when encountering 503 rate limit errors for JSON requests
+- Added automatic fallback to mock data when JSON parsing fails
 - Improved educational experience by providing mock responses instead of error messages during API rate limiting
 
 ## [0.2.1] - 2025-04-14

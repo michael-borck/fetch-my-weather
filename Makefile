@@ -23,13 +23,13 @@ clean:
 	find . -type d -name .pytest_cache -exec rm -rf {} +
 
 lint:
-	ruff check src/simple_weather tests examples
+	ruff check src/fetch_my_weather tests examples
 
 format:
-	ruff format src/simple_weather tests examples
+	ruff format src/fetch_my_weather tests examples
 
 type-check:
-	mypy src/simple_weather
+	mypy src/fetch_my_weather
 
 test:
 	pytest -v

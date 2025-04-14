@@ -553,8 +553,25 @@ def get_weather(
                         return validation_error
 
                 except json.JSONDecodeError:
-                    json_error: str = f"Error: Unable to parse JSON response from {url}"
-                    return json_error
+                    # JSON decode failed - for educational use, provide mock data instead of error
+                    if format == "raw_json":
+                        # Return raw dict for raw_json format
+                        mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
+                        mock_data["note"] = "Mock data provided due to JSON parsing error"
+                        json_parse_error_data: dict[str, Any] = mock_data
+                        return json_parse_error_data
+                    else:
+                        # Return Pydantic model for json format
+                        try:
+                            mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
+                            json_parse_mock_response: WeatherResponse = WeatherResponse.parse_obj(
+                                mock_data
+                            )
+                            return json_parse_mock_response
+                        except ValidationError:
+                            # If model conversion fails, return error message
+                            json_error: str = f"Error: Unable to parse JSON response from {url}"
+                            return json_error
             else:
                 # Text format - return as is
                 data = response.text
