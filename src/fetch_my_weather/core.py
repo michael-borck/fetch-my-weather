@@ -7,7 +7,7 @@ with built-in caching and error handling to make it suitable for educational use
 
 import json
 import time
-from typing import Any, Dict, Literal, Optional, Tuple, Union
+from typing import Any, Literal
 
 import requests
 from pydantic import ValidationError
@@ -17,13 +17,13 @@ from .models import WeatherResponse
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
 _CACHE_DURATION_SECONDS = 600  # Cache data for 10 minutes
-_USER_AGENT = "fetch-my-weather/0.1.3"  # Be polite and identify our package
+_USER_AGENT = "fetch-my-weather/0.2.0"  # Be polite and identify our package
 _USE_MOCK_DATA = False  # Flag to use mock data instead of real API
 
 # --- In-memory Cache ---
 # Simple dictionary to store cached responses
 # Format: { "url": (timestamp, data) }
-_cache: Dict[str, Tuple[float, Any]] = {}
+_cache: dict[str, tuple[float, str | bytes | dict[str, Any] | WeatherResponse]] = {}
 
 # --- Mock Data ---
 # Sample responses for different request types
@@ -57,7 +57,7 @@ _MOCK_DATA = {
                 "precipInches": "0.0",
                 "visibility": "10",
                 "visibilityMiles": "6",
-                "uvIndex": "4"
+                "uvIndex": "4",
             }
         ],
         "nearest_area": [
@@ -68,15 +68,10 @@ _MOCK_DATA = {
                 "latitude": "51.517",
                 "longitude": "-0.106",
                 "population": "7556900",
-                "weatherUrl": [{"value": ""}]
+                "weatherUrl": [{"value": ""}],
             }
         ],
-        "request": [
-            {
-                "query": "London",
-                "type": "City"
-            }
-        ],
+        "request": [{"query": "London", "type": "City"}],
         "weather": [
             {
                 "date": "2025-04-13",
@@ -87,7 +82,7 @@ _MOCK_DATA = {
                         "sunrise": "06:12 AM",
                         "sunset": "07:59 PM",
                         "moonrise": "12:34 PM",
-                        "moonset": "02:56 AM"
+                        "moonset": "02:56 AM",
                     }
                 ],
                 "maxtempC": "18",
@@ -129,13 +124,13 @@ _MOCK_DATA = {
                         "WindGustKmph": "11",
                         "FeelsLikeC": "9",
                         "FeelsLikeF": "48",
-                        "uvIndex": "1"
+                        "uvIndex": "1",
                     }
-                ]
+                ],
             }
-        ]
+        ],
     },
-    "png": b"Mock PNG data - not real image bytes"
+    "png": b"Mock PNG data - not real image bytes",
 }
 
 # --- Configuration Functions ---
@@ -187,7 +182,7 @@ def clear_cache() -> int:
 def set_mock_mode(use_mock: bool) -> bool:
     """
     Enable or disable the use of mock data instead of real API calls.
-    
+
     This is useful for development and testing when you want to avoid
     hitting the wttr.in API, especially under rate limiting.
 
@@ -209,13 +204,13 @@ def _build_url(
     location: str = "",
     units: str = "",
     view_options: str = "",
-    lang: Optional[str] = None,
+    lang: str | None = None,
     is_png: bool = False,
     png_options: str = "",
     is_moon: bool = False,
-    moon_date: Optional[str] = None,
-    moon_location_hint: Optional[str] = None,
-    format: Literal["text", "json", "png"] = "text",
+    moon_date: str | None = None,
+    moon_location_hint: str | None = None,
+    format: Literal["text", "json", "raw_json", "png"] = "text",
 ) -> str:
     """
     Constructs the full URL for the wttr.in request.
@@ -230,13 +225,13 @@ def _build_url(
         is_moon: If True, fetch moon phase instead of weather
         moon_date: Specific date for moon phase in 'YYYY-MM-DD' format
         moon_location_hint: Location hint for moon phase (e.g., ',+US', ',+Paris')
-        format: Output format - "text", "json", or "png" (default: "text")
+        format: Output format - "text", "json", "raw_json", or "png" (default: "text")
 
     Returns:
         Full URL for the wttr.in request
     """
     url = BASE_URL
-    query_params: Dict[str, str] = {}
+    query_params: dict[str, str] = {}
     path_parts = []
 
     # --- Location Handling ---
@@ -274,7 +269,7 @@ def _build_url(
     # For backward compatibility
     if is_png:
         format = "png"
-        
+
     if format == "png":
         # PNG format uses underscores in the path
         path_parts.append(
@@ -291,10 +286,10 @@ def _build_url(
         # Text or JSON format uses query parameters
         url += location_part.lstrip("/")  # Add location to path
 
-        # Add format specification for JSON
-        if format == "json":
+        # Add format specification for JSON formats
+        if format == "json" or format == "raw_json":
             query_params["format"] = "j1"  # j1 is the compact JSON format from wttr.in
-        
+
         # Add options as query parameter string if any exist
         if combined_options:
             query_params["format_options"] = (
@@ -320,7 +315,7 @@ def _build_url(
     return url
 
 
-def _get_from_cache(url: str) -> Optional[Union[str, bytes]]:
+def _get_from_cache(url: str) -> str | bytes | dict[str, Any] | WeatherResponse | None:
     """
     Checks cache for non-expired data.
 
@@ -344,7 +339,7 @@ def _get_from_cache(url: str) -> Optional[Union[str, bytes]]:
     return None
 
 
-def _add_to_cache(url: str, data: Union[str, bytes]) -> None:
+def _add_to_cache(url: str, data: str | bytes | dict[str, Any] | WeatherResponse) -> None:
     """
     Adds data to the cache with current timestamp.
 
@@ -363,15 +358,15 @@ def get_weather(
     location: str = "",
     units: str = "",
     view_options: str = "",
-    lang: Optional[str] = None,
+    lang: str | None = None,
     is_png: bool = False,
     png_options: str = "",
     is_moon: bool = False,
-    moon_date: Optional[str] = None,
-    moon_location_hint: Optional[str] = None,
-    format: Literal["text", "json", "png"] = "json",
-    use_mock: Optional[bool] = None,
-) -> Union[str, bytes, Dict[str, Any], WeatherResponse]:
+    moon_date: str | None = None,
+    moon_location_hint: str | None = None,
+    format: Literal["text", "json", "raw_json", "png"] = "json",
+    use_mock: bool | None = None,
+) -> str | bytes | dict[str, Any] | WeatherResponse:
     """
     Fetches weather or moon phase information from wttr.in.
 
@@ -390,14 +385,16 @@ def get_weather(
                   Only used if is_moon is True.
         moon_location_hint: Location hint for moon phase (e.g., ',+US', ',+Paris').
                            Only used if is_moon is True.
-        format: Output format - "text", "json", or "png" (default: "json").
-                When "json" is used, returns a Python dictionary.
+        format: Output format - "text", "json", "raw_json", or "png" (default: "json").
+                When "json" is used, returns a WeatherResponse Pydantic model.
+                When "raw_json" is used, returns the raw JSON as a Python dictionary.
         use_mock: If True, use mock data instead of making a real API request.
                  If None, use the global setting (_USE_MOCK_DATA).
 
     Returns:
         If format is "text": Returns the weather report as a string.
         If format is "json": Returns the weather data as a WeatherResponse Pydantic model.
+        If format is "raw_json": Returns the raw JSON data as a Python dictionary.
         If format is "png": Returns the PNG image data as bytes.
         If an error occurs: Returns an error message string.
         No exceptions are raised.
@@ -427,40 +424,84 @@ def get_weather(
     # If mock mode is enabled, return mock data
     if should_use_mock:
         if format == "png" or is_png:
-            return _MOCK_DATA["png"]
+            # Cast to bytes using a type assertion for the type checker
+            mock_png: bytes = _MOCK_DATA["png"]  # type: ignore
+            return mock_png
         elif format == "json":
             # Make a deep copy to avoid modifying the original mock data
             json_data = json.loads(json.dumps(_MOCK_DATA["json"]))
             try:
                 # Convert to Pydantic model
-                return WeatherResponse.parse_obj(json_data)
+                model_data: WeatherResponse = WeatherResponse.parse_obj(json_data)
+                return model_data
             except ValidationError:
-                return f"Error: Mock data doesn't match the expected model structure"
+                error_msg: str = "Error: Mock data doesn't match the expected model structure"
+                return error_msg
+        elif format == "raw_json":
+            # Return the raw JSON as a dictionary without Pydantic conversion
+            # Make a deep copy to avoid modifying the original mock data
+            dict_data: dict[str, Any] = json.loads(json.dumps(_MOCK_DATA["json"]))
+            return dict_data
         else:
-            return _MOCK_DATA["text"]
+            # Explicit cast to str for type checker
+            text_data: str = str(_MOCK_DATA["text"])
+            return text_data
 
     # Check cache first
     cached_data = _get_from_cache(url)
     if cached_data is not None:
         # If it's JSON format and we have a cached string or dict
-        if format == "json":
+        if format == "json" or format == "raw_json":
             if isinstance(cached_data, str):
                 try:
                     json_data = json.loads(cached_data)
-                    return WeatherResponse.parse_obj(json_data)
+                    # For raw_json, just return the parsed dictionary
+                    if format == "raw_json":
+                        parsed_dict: dict[str, Any] = json_data
+                        return parsed_dict
+                    # For json, convert to Pydantic model
+                    parsed_model: WeatherResponse = WeatherResponse.parse_obj(json_data)
+                    return parsed_model
                 except (json.JSONDecodeError, ValidationError):
                     # If JSON parsing fails, return as string
-                    return cached_data
+                    if isinstance(cached_data, str):
+                        error_text: str = cached_data
+                        return error_text
+                    # Fallback for other types
+                    return str(cached_data)
             elif isinstance(cached_data, WeatherResponse):
-                # If it's already a WeatherResponse object
-                return cached_data
+                # If it's already a WeatherResponse object and format is json
+                if format == "json":
+                    weather_model: WeatherResponse = cached_data
+                    return weather_model
+                # If format is raw_json, convert WeatherResponse to dict
+                elif format == "raw_json":
+                    # Convert Pydantic model to dict
+                    model_dict: dict[str, Any] = json.loads(cached_data.json())
+                    return model_dict
             elif isinstance(cached_data, dict):
-                # If it's a dict, convert to WeatherResponse
+                # If it's a dict and format is raw_json, return as is
+                if format == "raw_json":
+                    raw_dict: dict[str, Any] = cached_data
+                    return raw_dict
+                # If format is json, convert to WeatherResponse
                 try:
-                    return WeatherResponse.parse_obj(cached_data)
+                    cached_model: WeatherResponse = WeatherResponse.parse_obj(cached_data)
+                    return cached_model
                 except ValidationError:
-                    return f"Error: Cached data doesn't match the expected model structure"
-        return cached_data
+                    struct_error: str = "Error: Cached data doesn't match the expected model structure"
+                    return struct_error
+        # Handle other formats or types
+        if isinstance(cached_data, str):
+            cached_text: str = cached_data
+            return cached_text
+        elif isinstance(cached_data, bytes):
+            binary_data: bytes = cached_data
+            return binary_data
+        else:
+            # For any other type, convert to string
+            fallback: str = str(cached_data)
+            return fallback
 
     # --- Perform the actual request ---
     headers = {"User-Agent": _USER_AGENT}
@@ -480,25 +521,30 @@ def get_weather(
                 # Add successful response to cache
                 _add_to_cache(url, data)
                 return data
-            elif format == "json":
-                # For JSON, parse the response and return as Pydantic model
+            elif format == "json" or format == "raw_json":
+                # For JSON formats, parse the response
                 try:
                     data = response.text
                     # Add raw text to cache
                     _add_to_cache(url, data)
                     json_data = json.loads(data)
-                    
-                    # Convert to Pydantic model
+
+                    # For raw_json, return the dictionary without Pydantic conversion
+                    if format == "raw_json":
+                        json_dict_data: dict[str, Any] = json_data
+                        return json_dict_data
+
+                    # For standard json, convert to Pydantic model
                     try:
-                        weather_response = WeatherResponse.parse_obj(json_data)
+                        weather_response: WeatherResponse = WeatherResponse.parse_obj(json_data)
                         return weather_response
                     except ValidationError as e:
-                        error_message = f"Error: JSON data doesn't match the expected model structure: {str(e)}"
-                        return error_message
-                        
+                        validation_error: str = f"Error: JSON data doesn't match the expected model structure: {str(e)}"
+                        return validation_error
+
                 except json.JSONDecodeError:
-                    error_message = f"Error: Unable to parse JSON response from {url}"
-                    return error_message
+                    json_error: str = f"Error: Unable to parse JSON response from {url}"
+                    return json_error
             else:
                 # Text format - return as is
                 data = response.text

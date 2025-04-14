@@ -12,9 +12,11 @@ This guide provides comprehensive information about the `fetch-my-weather` Pytho
 - Moon phase information
 - Location-based weather (cities, airports, coordinates)
 - Multiple language support
-- Text and PNG output formats
+- Text, JSON, and PNG output formats
 - Built-in caching to reduce API requests
 - Beginner-friendly error handling (no exceptions)
+- Mock data mode for development and testing
+- Pydantic models for type-safe JSON data handling
 - Designed for teaching Python and API interactions
 
 ## Installation
@@ -42,7 +44,9 @@ fetch_my_weather.get_weather(
     is_moon: bool = False,
     moon_date: Optional[str] = None,
     moon_location_hint: Optional[str] = None,
-) -> Union[str, bytes]
+    format: Literal["text", "json", "raw_json", "png"] = "json",
+    use_mock: Optional[bool] = None,
+) -> Union[str, bytes, Dict[str, Any], WeatherResponse]
 ```
 
 #### Parameters
@@ -53,16 +57,20 @@ fetch_my_weather.get_weather(
 | `units` | str | Units system: `m` (metric, default), `u` (US/imperial), `M` (wind in m/s) |
 | `view_options` | str | Display options: `0`-`3` (forecast days), `n` (narrow), `q` (quiet), etc. |
 | `lang` | str | Language code (e.g., `en`, `fr`, `es`, `ru`, `zh-cn`) |
-| `is_png` | bool | If `True`, return PNG image as bytes instead of text |
+| `is_png` | bool | Deprecated: If `True`, return PNG image as bytes instead of text. Use `format="png"` instead. |
 | `png_options` | str | PNG-specific options: `p` (padding), `t` (transparency), etc. |
 | `is_moon` | bool | If `True`, show moon phase instead of weather |
 | `moon_date` | str | Date for moon phase in `YYYY-MM-DD` format (with `is_moon=True`) |
 | `moon_location_hint` | str | Location hint for moon phase (e.g., `,+US`, `,+Paris`) |
+| `format` | str | Output format: `"text"`, `"json"` (default, Pydantic model), `"raw_json"` (Python dict), or `"png"` |
+| `use_mock` | bool | If set, overrides the global mock mode setting for this request only |
 
 #### Return Value
 
-- If successful and not PNG: Returns the weather report as a string.
-- If successful and PNG: Returns the PNG image data as bytes.
+- If successful with `format="text"`: Returns the weather report as a string.
+- If successful with `format="png"`: Returns the PNG image data as bytes.
+- If successful with `format="json"`: Returns a `WeatherResponse` Pydantic model.
+- If successful with `format="raw_json"`: Returns the raw JSON data as a Python dictionary.
 - If an error occurs: Returns an error message string (starting with "Error:").
 
 ### Configuration Functions
@@ -76,6 +84,9 @@ fetch_my_weather.clear_cache() -> int
 
 # Set a custom user agent string
 fetch_my_weather.set_user_agent(user_agent: str) -> str
+
+# Enable or disable mock data mode globally
+fetch_my_weather.set_mock_mode(enabled: bool) -> bool
 ```
 
 ## Usage Examples
@@ -86,11 +97,12 @@ fetch_my_weather.set_user_agent(user_agent: str) -> str
 import fetch_my_weather
 
 # Get weather for current location (based on IP)
+# Returns WeatherResponse Pydantic model by default (JSON format)
 weather = fetch_my_weather.get_weather()
 print(weather)
 
-# Get weather for a specific city
-paris_weather = fetch_my_weather.get_weather(location="Paris")
+# Get weather for a specific city as text
+paris_weather = fetch_my_weather.get_weather(location="Paris", format="text")
 print(paris_weather)
 
 # Get weather with compact view and metric units
@@ -98,6 +110,65 @@ berlin_weather = fetch_my_weather.get_weather(
     location="Berlin", view_options="0", units="m"
 )
 print(berlin_weather)
+```
+
+### Using JSON Format with Pydantic Models
+
+```python
+import fetch_my_weather
+
+# Get weather data as a Pydantic model
+weather = fetch_my_weather.get_weather(location="London")
+
+# Access data with type safety
+if weather.current_condition:
+    current = weather.current_condition[0]
+    print(f"Temperature: {current.temp_C}°C / {current.temp_F}°F")
+    
+    if current.weatherDesc:
+        print(f"Condition: {current.weatherDesc[0].value}")
+        
+    print(f"Humidity: {current.humidity}%")
+    print(f"Wind: {current.windspeedKmph} km/h, {current.winddir16Point}")
+```
+
+### Using Raw JSON Format
+
+```python
+import fetch_my_weather
+
+# Get weather data as a raw Python dictionary
+weather = fetch_my_weather.get_weather(location="London", format="raw_json")
+
+# Access data using dictionary key/value access
+if "current_condition" in weather and weather["current_condition"]:
+    current = weather["current_condition"][0]
+    print(f"Temperature: {current.get('temp_C')}°C / {current.get('temp_F')}°F")
+    
+    if "weatherDesc" in current and current["weatherDesc"]:
+        print(f"Condition: {current['weatherDesc'][0]['value']}")
+        
+    print(f"Humidity: {current.get('humidity')}%")
+    print(f"Wind: {current.get('windspeedKmph')} km/h, {current.get('winddir16Point')}")
+```
+
+### Using Mock Mode
+
+```python
+import fetch_my_weather
+
+# Enable mock mode globally
+fetch_my_weather.set_mock_mode(True)
+
+# Get mock weather data (no API call is made)
+mock_weather = fetch_my_weather.get_weather(location="Tokyo")
+print(f"Mock temperature: {mock_weather.current_condition[0].temp_C}°C")
+
+# Override mock mode for a specific request
+real_weather = fetch_my_weather.get_weather(location="Tokyo", use_mock=False)
+
+# Disable mock mode
+fetch_my_weather.set_mock_mode(False)
 ```
 
 ### Getting Moon Phase Data
@@ -116,7 +187,7 @@ print(christmas_moon)
 
 ```python
 # Weather as PNG (returns bytes)
-london_png = fetch_my_weather.get_weather(location="London", is_png=True)
+london_png = fetch_my_weather.get_weather(location="London", format="png")
 
 # Save PNG to file
 with open("london_weather.png", "wb") as f:
@@ -124,8 +195,11 @@ with open("london_weather.png", "wb") as f:
 
 # PNG with transparency
 transparent_png = fetch_my_weather.get_weather(
-    location="Tokyo", is_png=True, png_options="t"
+    location="Tokyo", format="png", png_options="t"
 )
+
+# Using the deprecated method (still works but not recommended)
+old_method_png = fetch_my_weather.get_weather(location="London", is_png=True)
 ```
 
 ### Caching Control
@@ -151,30 +225,47 @@ result = fetch_my_weather.get_weather(location="NonExistentPlace12345")
 if isinstance(result, str) and result.startswith("Error:"):
     print(f"Something went wrong: {result}")
 else:
-    print("Weather data:", result)
+    print("Weather data received successfully")
+    
+    # If using JSON format (default)
+    if hasattr(result, "current_condition"):
+        print(f"Temperature: {result.current_condition[0].temp_C}°C")
 ```
 
 ## Architecture Details
 
-The package has a simple, flat architecture:
+The package has a modular architecture:
 
 ```
 src/fetch_my_weather/
 ├── __init__.py      # Exports public API
-└── core.py          # Core implementation
+├── core.py          # Core implementation
+└── models.py        # Pydantic models for JSON data
 ```
 
 Data flow:
 1. User calls `get_weather()` with parameters
-2. Parameters are validated
-3. URL is constructed using `_build_url()`
-4. Cache is checked using `_get_from_cache()`
-5. If data is not in cache, HTTP request is made
-6. Response is processed
-7. Response is stored in cache using `_add_to_cache()`
-8. Data is returned to the user
+2. If mock mode is enabled and not explicitly disabled for this request, mock data is returned
+3. Parameters are validated
+4. URL is constructed using `_build_url()`
+5. Cache is checked using `_get_from_cache()`
+6. If data is not in cache, HTTP request is made
+7. Response is processed (with JSON data converted to Pydantic models)
+8. Response is stored in cache using `_add_to_cache()`
+9. Data is returned to the user
 
 The caching system uses a simple in-memory dictionary with URL keys and (timestamp, data) values.
+
+### Pydantic Models
+
+The package uses Pydantic models to provide structured, type-safe access to JSON weather data, including:
+
+- `WeatherResponse`: The top-level response model
+- `CurrentCondition`: Current weather information
+- `DailyForecast`: Daily weather forecast
+- `HourlyForecast`: Hourly weather forecast
+- `NearestArea`: Location information
+- `Astronomy`: Sun and moon information
 
 ## Common Use Cases
 
@@ -183,7 +274,9 @@ The caching system uses a simple in-memory dictionary with URL keys and (timesta
 3. **Weather Images**: Generate weather images for display
 4. **Moon Phase Information**: Get current or future moon phases
 5. **Weather in Different Languages**: Get weather information in various languages
-6. **Educational Projects**: Using the package to teach API interactions and data processing
+6. **Structured JSON Data**: Process weather data with type safety using Pydantic models
+7. **Development and Testing**: Use mock mode to develop without hitting API rate limits
+8. **Educational Projects**: Using the package to teach API interactions and data processing
 
 ## Project Ideas
 
@@ -210,14 +303,17 @@ The package includes mini-projects of varying difficulty levels:
 1. **Check for Errors**: Always check if the result starts with "Error:" before using it
 2. **Use Caching**: Leverage the built-in caching to avoid unnecessary requests
 3. **Respect the Service**: Don't make too many requests to wttr.in
-4. **Handle PNG Returns**: Remember that PNG requests return bytes, not strings
-5. **Use Compact Views**: Use view_options="0" or "1" for smaller, more focused weather data
+4. **Use Mock Mode for Development**: Enable mock mode during development and testing
+5. **Use JSON Format with Models**: Prefer the JSON format with Pydantic models for type safety
+6. **Handle PNG Returns**: Remember that PNG requests return bytes, not strings
+7. **Use Compact Views**: Use view_options="0" or "1" for smaller, more focused weather data
 
 ## Key Limitations
 
 1. **In-memory Cache**: Cache is not persistent across program restarts
-2. **Network Dependency**: Requires internet connection to fetch weather data
+2. **Network Dependency**: Requires internet connection to fetch real weather data (though mock mode can help)
 3. **Service Limitations**: Subject to wttr.in service availability and rate limits
+4. **Fixed Pydantic Model Structure**: The Pydantic models match wttr.in's output format, which may change
 
 ## Acknowledgments
 

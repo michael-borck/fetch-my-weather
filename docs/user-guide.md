@@ -161,6 +161,12 @@ json_weather = fetch_my_weather.get_weather(location="London")
 # Access data with type safety and autocompletion
 temp = json_weather.current_condition[0].temp_C 
 
+# Raw JSON format - returns a Python dictionary
+raw_weather = fetch_my_weather.get_weather(location="London", format="raw_json")
+# Access data using dictionary syntax
+temp = raw_weather["current_condition"][0]["temp_C"]
+condition = raw_weather["current_condition"][0]["weatherDesc"][0]["value"]
+
 # Text format - returns plain text with ASCII art (for direct display)
 text_weather = fetch_my_weather.get_weather(location="Paris", format="text")
 print(text_weather)

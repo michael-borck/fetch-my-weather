@@ -5,23 +5,26 @@ These models define the structure of the JSON data returned by the wttr.in API,
 providing type safety, validation, and easier access to weather data.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
 
 class WeatherDesc(BaseModel):
     """Weather description model."""
+
     value: str
 
 
 class WeatherIconUrl(BaseModel):
     """Weather icon URL model."""
+
     value: str
 
 
 class Astronomy(BaseModel):
     """Astronomy information including sunrise, sunset, moonrise, moonset, etc."""
+
     moon_illumination: Optional[str] = None
     moon_phase: Optional[str] = None
     moonrise: Optional[str] = None
@@ -32,21 +35,25 @@ class Astronomy(BaseModel):
 
 class AreaName(BaseModel):
     """Area name model."""
+
     value: str
 
 
 class Country(BaseModel):
     """Country model."""
+
     value: str
 
 
 class Region(BaseModel):
     """Region model."""
+
     value: str
 
 
 class HourlyForecast(BaseModel):
     """Hourly weather forecast data."""
+
     DewPointC: Optional[str] = None
     DewPointF: Optional[str] = None
     FeelsLikeC: Optional[str] = None
@@ -90,6 +97,7 @@ class HourlyForecast(BaseModel):
 
 class CurrentCondition(BaseModel):
     """Current weather conditions."""
+
     FeelsLikeC: Optional[str] = None
     FeelsLikeF: Optional[str] = None
     cloudcover: Optional[str] = None
@@ -116,6 +124,7 @@ class CurrentCondition(BaseModel):
 
 class DailyForecast(BaseModel):
     """Daily weather forecast data."""
+
     astronomy: List[Astronomy] = Field(default_factory=list)
     avgtempC: Optional[str] = None
     avgtempF: Optional[str] = None
@@ -132,6 +141,7 @@ class DailyForecast(BaseModel):
 
 class NearestArea(BaseModel):
     """Information about the nearest area."""
+
     areaName: List[AreaName] = Field(default_factory=list)
     country: List[Country] = Field(default_factory=list)
     latitude: Optional[str] = None
@@ -143,13 +153,16 @@ class NearestArea(BaseModel):
 
 class Request(BaseModel):
     """Information about the request that was made."""
+
     query: Optional[str] = None
     type: Optional[str] = None
 
 
 class WeatherResponse(BaseModel):
     """Complete weather response from wttr.in API."""
+
     current_condition: List[CurrentCondition] = Field(default_factory=list)
     nearest_area: List[NearestArea] = Field(default_factory=list)
     request: List[Request] = Field(default_factory=list)
     weather: List[DailyForecast] = Field(default_factory=list)
+

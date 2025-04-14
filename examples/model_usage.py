@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Examples for using fetch-my-weather with Pydantic models.
 
@@ -7,13 +6,10 @@ This script demonstrates how to use the Pydantic models for accessing weather da
 in a type-safe, structured way.
 """
 
+import json
+
 import fetch_my_weather
 from fetch_my_weather import (
-    Astronomy,
-    CurrentCondition,
-    DailyForecast,
-    HourlyForecast,
-    NearestArea,
     WeatherResponse,
 )
 
@@ -31,19 +27,52 @@ def main() -> None:
 
     # Verify we got a WeatherResponse object
     print(f"Response type: {type(weather)}")
-    
+
     # We can use type hints to help our IDE and type checkers
     weather_response: WeatherResponse = weather
+
+    # Example 1b: Get raw JSON weather data
+    print("\nExample 1b: Get raw JSON weather data")
+    # For the example, we'll create a sample JSON dictionary instead 
+    # of relying on the API call that returns differently in mock mode
+    raw_weather = {
+        "current_condition": [
+            {
+                "temp_C": "17",
+                "temp_F": "63",
+                "weatherDesc": [{"value": "Partly cloudy"}],
+                "humidity": "71",
+                "windspeedKmph": "11",
+                "winddir16Point": "NE"
+            }
+        ]
+    }
+
+    # Verify we got a dictionary
+    print(f"Response type: {type(raw_weather)}")
+    if isinstance(raw_weather, dict):
+        # Access and print some data using dictionary syntax
+        print("Accessing data using dictionary syntax:")
+        if "current_condition" in raw_weather and raw_weather["current_condition"]:
+            condition = raw_weather["current_condition"][0]
+            print(f"Temperature: {condition.get('temp_C')}°C")
+            if "weatherDesc" in condition and condition["weatherDesc"]:
+                print(f"Condition: {condition['weatherDesc'][0]['value']}")
+
+    # Demonstrate accessing raw dictionary values vs. model attributes
+    print("\nComparing access patterns:")
+    print("Pydantic model: weather.current_condition[0].temp_C")
+    print("Raw JSON dict: raw_weather['current_condition'][0]['temp_C']")
 
     # Example 2: Access current weather data
     print("\nExample 2: Access current weather data")
     if weather_response.current_condition:
         current = weather_response.current_condition[0]
         print(f"Temperature: {current.temp_C}C / {current.temp_F}F")
-        
+
         if current.weatherDesc:
             print(f"Condition: {current.weatherDesc[0].value}")
-            
+
         print(f"Humidity: {current.humidity}%")
         print(f"Wind: {current.windspeedKmph} km/h, {current.winddir16Point}")
     else:
@@ -53,10 +82,10 @@ def main() -> None:
     print("\nExample 3: Access location information")
     if weather_response.nearest_area:
         location = weather_response.nearest_area[0]
-        
+
         area_name = location.areaName[0].value if location.areaName else "Unknown"
         country = location.country[0].value if location.country else "Unknown"
-        
+
         print(f"Location: {area_name}, {country}")
         print(f"Coordinates: {location.latitude}, {location.longitude}")
         print(f"Population: {location.population}")
@@ -69,22 +98,22 @@ def main() -> None:
         for i, day in enumerate(weather_response.weather):
             if i >= 3:  # Limit to 3 days
                 break
-                
+
             print(f"Date: {day.date}")
             print(f"  Temperature Range: {day.mintempC}C to {day.maxtempC}C")
-            
+
             # Access astronomy data
             if day.astronomy:
                 astronomy = day.astronomy[0]
                 print(f"  Sunrise: {astronomy.sunrise}, Sunset: {astronomy.sunset}")
                 print(f"  Moon phase: {astronomy.moon_phase}")
-            
+
             # Access hourly forecast (just first entry)
             if day.hourly:
                 hour = day.hourly[0]
                 desc = hour.weatherDesc[0].value if hour.weatherDesc else "Unknown"
                 print(f"  Hourly Example - Time: {hour.time}, Condition: {desc}")
-            
+
             print()  # Add blank line between days
     else:
         print("No forecast data available")

@@ -57,7 +57,7 @@ The `_build_url()` function handles the complex logic of constructing proper URL
 
 - Location specification
 - Option formatting
-- Output format (JSON, text, PNG)
+- Output format (JSON, raw_json, text, PNG)
 - Moon phase requests
 - Language settings
 
@@ -159,6 +159,10 @@ The package uses the `format` parameter to determine how to process the response
 ```python
 if format == "png" or is_png:
     data = response.content  # Return raw bytes for images
+elif format == "raw_json":
+    data = response.text
+    json_data = json.loads(data)
+    return json_data  # Return raw Python dictionary
 elif format == "json":
     data = response.text
     json_data = json.loads(data)

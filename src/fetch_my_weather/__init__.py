@@ -6,7 +6,7 @@ from weather services, with built-in caching and error handling to make it suita
 for educational use.
 """
 
-__version__ = "0.1.3"
+__version__ = "0.2.0"
 
 from .core import (
     clear_cache,
@@ -32,7 +32,6 @@ __all__ = [
     "set_cache_duration",
     "set_user_agent",
     "set_mock_mode",
-    
     # Models
     "WeatherResponse",
     "CurrentCondition",

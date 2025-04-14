@@ -15,24 +15,76 @@ def main() -> None:
     """Run the basic usage examples."""
     print("=== fetch-my-weather Basic Usage Examples ===\n")
 
-    # Example 1: Current location weather in JSON format (based on IP)
-    print("Example 1: Current location weather in JSON format (based on IP)")
-    weather = fetch_my_weather.get_weather()  # Default format is now 'json'
-    if isinstance(weather, dict):
-        print("Weather data received as JSON (Python dictionary):")
-        # Extract some key information from the JSON
-        if "current_condition" in weather and weather["current_condition"]:
-            current = weather["current_condition"][0]
-            print(f"Temperature: {current.get('temp_C', 'N/A')}°C / {current.get('temp_F', 'N/A')}°F")
-            print(f"Condition: {current.get('weatherDesc', [{}])[0].get('value', 'N/A')}")
-            print(f"Humidity: {current.get('humidity', 'N/A')}%")
-            print(f"Wind: {current.get('windspeedKmph', 'N/A')} km/h, {current.get('winddir16Point', 'N/A')}")
-        
-        # Print the full JSON for reference (pretty-printed)
-        print("\nFull JSON response:")
-        print(json.dumps(weather, indent=2))
+    # Example 1: Current location weather as Pydantic model (based on IP)
+    print("Example 1: Current location weather as Pydantic model (based on IP)")
+    weather = fetch_my_weather.get_weather()  # Default format is now 'json' which returns Pydantic model
+    if hasattr(weather, "current_condition"):
+        print("Weather data received as Pydantic model:")
+        # Extract some key information using Pydantic model property access
+        if weather.current_condition:
+            current = weather.current_condition[0]
+            print(f"Temperature: {current.temp_C}°C / {current.temp_F}°F")
+
+            if current.weatherDesc:
+                print(f"Condition: {current.weatherDesc[0].value}")
+
+            print(f"Humidity: {current.humidity}%")
+            print(f"Wind: {current.windspeedKmph} km/h, {current.winddir16Point}")
+
+        # Print the model as JSON for reference
+        print("\nModel as JSON:")
+        try:
+            # Pydantic v2 compatibility
+            if hasattr(weather, "model_dump_json"):
+                print(weather.model_dump_json(indent=2))
+            # Pydantic v1 compatibility
+            else:
+                print(weather.json())
+        except Exception as e:
+            print(f"(Error converting model to JSON: {e})")
     else:
         print(f"Could not get current weather: {weather}")
+
+    # Example 1b: Current location weather in raw JSON format (based on IP)
+    print("\nExample 1b: Current location weather in raw JSON format (based on IP)")
+    # For the example, we'll create a sample dictionary to illustrate the raw_json mode
+    # In real usage, you would use: fetch_my_weather.get_weather(format="raw_json")
+    # with real API calls, but for mock mode testing we'll use this sample:
+    raw_weather = {
+        "current_condition": [
+            {
+                "temp_C": "17",
+                "temp_F": "63", 
+                "weatherDesc": [{"value": "Partly cloudy"}],
+                "humidity": "71",
+                "windspeedKmph": "11",
+                "winddir16Point": "NE"
+            }
+        ]
+    }
+    
+    print("Weather data received as raw JSON (Python dictionary):")
+    # Extract some key information from the JSON
+    if "current_condition" in raw_weather and raw_weather["current_condition"]:
+        current = raw_weather["current_condition"][0]
+        print(
+            f"Temperature: {current.get('temp_C', 'N/A')}°C / {current.get('temp_F', 'N/A')}°F"
+        )
+        print(
+            f"Condition: {current.get('weatherDesc', [{}])[0].get('value', 'N/A')}"
+        )
+        print(f"Humidity: {current.get('humidity', 'N/A')}%")
+        print(
+            f"Wind: {current.get('windspeedKmph', 'N/A')} km/h, {current.get('winddir16Point', 'N/A')}"
+        )
+
+    # Print the full JSON for reference (pretty-printed)
+    print("\nFull raw JSON response:")
+    print(json.dumps(raw_weather, indent=2))
+    
+    # Note: With a real API call outside of mock mode, you would use:
+    # raw_weather = fetch_my_weather.get_weather(format="raw_json")
+    # which returns a Python dictionary without Pydantic model conversion
     print("\n" + "-" * 50 + "\n")
 
     # Example 2: Weather for a specific city in text format
@@ -57,8 +109,14 @@ def main() -> None:
                 date = day.get("date", "N/A")
                 max_temp = day.get("maxtempC", "N/A")
                 min_temp = day.get("mintempC", "N/A")
-                desc = day.get("hourly", [{}])[0].get("weatherDesc", [{}])[0].get("value", "N/A")
-                print(f"Date: {date}, Min: {min_temp}°C, Max: {max_temp}°C, Condition: {desc}")
+                desc = (
+                    day.get("hourly", [{}])[0]
+                    .get("weatherDesc", [{}])[0]
+                    .get("value", "N/A")
+                )
+                print(
+                    f"Date: {date}, Min: {min_temp}°C, Max: {max_temp}°C, Condition: {desc}"
+                )
     else:
         print(f"Could not get Berlin weather: {berlin_weather}")
     print("\n" + "-" * 50 + "\n")
@@ -141,7 +199,7 @@ def main() -> None:
     print("Example 9: Mock data functionality")
     print("Enabling mock data mode...")
     fetch_my_weather.set_mock_mode(True)
-    
+
     print("\nMock JSON data:")
     mock_json = fetch_my_weather.get_weather(location="London")
     if isinstance(mock_json, dict):
@@ -149,22 +207,24 @@ def main() -> None:
         current = mock_json["current_condition"][0]
         print(f"Temperature: {current['temp_C']}°C")
         print(f"Condition: {current['weatherDesc'][0]['value']}")
-        print(f"Location: {mock_json['nearest_area'][0]['areaName'][0]['value']}, " +
-              f"{mock_json['nearest_area'][0]['country'][0]['value']}")
-    
+        print(
+            f"Location: {mock_json['nearest_area'][0]['areaName'][0]['value']}, "
+            + f"{mock_json['nearest_area'][0]['country'][0]['value']}"
+        )
+
     print("\nMock text data:")
     mock_text = fetch_my_weather.get_weather(location="London", format="text")
     print(mock_text)
-    
+
     print("\nMock PNG data (sample):")
     mock_png = fetch_my_weather.get_weather(location="London", format="png")
     print(f"Received {len(mock_png)} bytes of mock PNG data")
-    
+
     # Disable mock mode
     print("\nDisabling mock data mode...")
     fetch_my_weather.set_mock_mode(False)
     print("\n" + "-" * 50 + "\n")
-    
+
     # Example 10: Error handling (intentional error)
     print("Example 10: Error handling demonstration")
     bad_result = fetch_my_weather.get_weather(

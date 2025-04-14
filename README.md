@@ -8,7 +8,7 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 - 🌙 Moon phase information
 - 🗺️ Location-based weather (cities, airports, coordinates)
 - 🌍 Multiple language support
-- 📊 Multiple output formats: JSON, text and PNG
+- 📊 Multiple output formats: JSON (with Pydantic models), raw JSON (dict), text and PNG
 - 🏗️ Type-safe Pydantic models for JSON responses
 - 🚀 Built-in caching to be nice to the wttr.in service
 - 🧪 Mock mode for development and testing without API rate limits
@@ -74,6 +74,12 @@ weather = fetch_my_weather.get_weather()
 # Access data using type-safe models with autocomplete
 temp = weather.current_condition[0].temp_C
 condition = weather.current_condition[0].weatherDesc[0].value
+
+# Raw JSON format - returns a Python dictionary
+raw_weather = fetch_my_weather.get_weather(format="raw_json")
+# Access data using dictionary key/value access
+temp = raw_weather["current_condition"][0]["temp_C"]
+condition = raw_weather["current_condition"][0]["weatherDesc"][0]["value"]
 
 # Text format - specific location
 nyc_weather = fetch_my_weather.get_weather(location="New York", format="text")
@@ -212,7 +218,7 @@ The `get_weather()` function accepts these parameters:
 | `units` | str | Units system: `m` (metric, default), `u` (US/imperial), `M` (wind in m/s) |
 | `view_options` | str | Display options: `0`-`3` (forecast days), `n` (narrow), `q` (quiet), etc. |
 | `lang` | str | Language code (e.g., `en`, `fr`, `es`, `ru`, `zh-cn`) |
-| `format` | str | Output format: `json` (default), `text`, or `png` |
+| `format` | str | Output format: `json` (default, Pydantic model), `raw_json` (Python dict), `text`, or `png` |
 | `is_png` | bool | If `True`, return PNG image as bytes instead of text (deprecated, use `format="png"`) |
 | `png_options` | str | PNG-specific options: `p` (padding), `t` (transparency), etc. |
 | `is_moon` | bool | If `True`, show moon phase instead of weather |

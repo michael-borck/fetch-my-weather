@@ -7,14 +7,16 @@ universal = 1
 
 [project]
 name = "fetch-my-weather"
-version = "0.1.3"
+version = "0.2.0"
 description = "A beginner-friendly Python package for fetching weather data, designed for educational use."
 readme = "README.md"
 authors = [{name = "Your Name", email = "your.email@example.com"}]
 license = {text = "MIT"}
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Education",
@@ -28,6 +30,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/michael-borck/fetch-my-weather"
+Documentation = "https://michaelborck.au/fetch-my-weather/"
 Issues = "https://github.com/michael-borck/fetch-my-weather/issues"
 
 [project.optional-dependencies]
@@ -42,7 +45,7 @@ dev = [
 [tool.ruff]
 # Linter settings
 line-length = 88
-target-version = "py37"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "W", "I", "C4", "UP", "N"]
@@ -55,7 +58,7 @@ indent-style = "space"
 line-ending = "auto"
 
 [tool.mypy]
-python_version = "3.7"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

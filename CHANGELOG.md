@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-04-14
+
+### Added
+- Added "raw_json" format option for retrieving JSON data as a Python dictionary without Pydantic model conversion
+- Updated Python version requirement from 3.7 to 3.10
+
+### Changed
+- Enhanced caching implementation to properly handle different format conversions
+- Improved mock data handling for raw_json format
+- Updated examples to demonstrate the new format option
+
 ## [0.1.2] - 2025-12-05
 
 ### Changed

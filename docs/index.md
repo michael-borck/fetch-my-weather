@@ -8,7 +8,7 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 - 🌙 Moon phase information
 - 🗺️ Location-based weather (cities, airports, coordinates)
 - 🌍 Multiple language support
-- 📊 Text and PNG output formats
+- 📊 Multiple output formats: text, JSON (with Pydantic models), raw JSON (Python dictionaries), and PNG images
 - 🚀 Built-in caching to be nice to the wttr.in service
 - 🛡️ Beginner-friendly error handling (no exceptions)
 - 📚 Designed for teaching Python and API interactions
