@@ -21,6 +21,8 @@ from .models import (
     DailyForecast,
     HourlyForecast,
     NearestArea,
+    ResponseMetadata,
+    ResponseWrapper,
     WeatherResponse,
 )
 
@@ -39,4 +41,6 @@ __all__ = [
     "DailyForecast",
     "HourlyForecast",
     "Astronomy",
+    "ResponseMetadata",
+    "ResponseWrapper",
 ]

@@ -46,7 +46,8 @@ fetch_my_weather.get_weather(
     moon_location_hint: Optional[str] = None,
     format: Literal["text", "json", "raw_json", "png"] = "json",
     use_mock: Optional[bool] = None,
-) -> Union[str, bytes, Dict[str, Any], WeatherResponse]
+    with_metadata: bool = False,
+) -> Union[str, bytes, Dict[str, Any], WeatherResponse, ResponseWrapper]
 ```
 
 #### Parameters
@@ -64,14 +65,17 @@ fetch_my_weather.get_weather(
 | `moon_location_hint` | str | Location hint for moon phase (e.g., `,+US`, `,+Paris`) |
 | `format` | str | Output format: `"text"`, `"json"` (default, Pydantic model), `"raw_json"` (Python dict), or `"png"` |
 | `use_mock` | bool | If set, overrides the global mock mode setting for this request only |
+| `with_metadata` | bool | If `True`, returns a `ResponseWrapper` containing both the response data and metadata about the response |
 
 #### Return Value
 
+- If `with_metadata=True`: Returns a `ResponseWrapper` object containing both the response data and metadata.
 - If successful with `format="text"`: Returns the weather report as a string.
 - If successful with `format="png"`: Returns the PNG image data as bytes.
 - If successful with `format="json"`: Returns a `WeatherResponse` Pydantic model.
 - If successful with `format="raw_json"`: Returns the raw JSON data as a Python dictionary.
-- If an error occurs: Returns an error message string (starting with "Error:").
+- If an error occurs with `with_metadata=False`: Returns an error message string (starting with "Error:").
+- If an error occurs with `with_metadata=True`: Returns mock data with error information in the metadata.
 
 ### Configuration Functions
 
@@ -245,7 +249,37 @@ if weather.current_condition:
     print(f"Temperature: {weather.current_condition[0].temp_C}°C")
 ```
 
-This makes the package more resilient during educational use, such as when multiple students are accessing the service simultaneously.
+### Response Metadata
+
+You can use the `with_metadata=True` parameter to get information about the response's source and any errors:
+
+```python
+# Get response with metadata
+response = fetch_my_weather.get_weather(
+    location="London",
+    with_metadata=True
+)
+
+# Response is now a ResponseWrapper object
+if isinstance(response, ResponseWrapper):
+    # Access the metadata
+    metadata = response.metadata
+    print(f"Real API data: {metadata.is_real_data}")
+    print(f"Cached data: {metadata.is_cached}")
+    print(f"Mock data: {metadata.is_mock}")
+    
+    # If there was an error, it's captured in the metadata
+    if metadata.error_type:
+        print(f"Error occurred: {metadata.error_type}")
+        print(f"Error message: {metadata.error_message}")
+    
+    # Access the actual data (which will be mock data if there was an error)
+    data = response.data
+    if hasattr(data, "current_condition") and data.current_condition:
+        print(f"Temperature: {data.current_condition[0].temp_C}°C")
+```
+
+With the metadata feature, the package will always return usable data (falling back to mock data) rather than error strings, making it more resilient during educational use, such as when multiple students are accessing the service simultaneously.
 
 ## Architecture Details
 
@@ -282,6 +316,8 @@ The package uses Pydantic models to provide structured, type-safe access to JSON
 - `NearestArea`: Location information
 - `Request`: Information about the API request (query string and location type)
 - `Astronomy`: Sun and moon information
+- `ResponseMetadata`: Metadata about the response (real/cached/mock, error info)
+- `ResponseWrapper`: Container for both data and metadata
 
 ## Common Use Cases
 
@@ -291,8 +327,9 @@ The package uses Pydantic models to provide structured, type-safe access to JSON
 4. **Moon Phase Information**: Get current or future moon phases
 5. **Weather in Different Languages**: Get weather information in various languages
 6. **Structured JSON Data**: Process weather data with type safety using Pydantic models
-7. **Development and Testing**: Use mock mode to develop without hitting API rate limits
-8. **Educational Projects**: Using the package to teach API interactions and data processing
+7. **Response Metadata**: Check data source and handle errors gracefully
+8. **Development and Testing**: Use mock mode to develop without hitting API rate limits
+9. **Educational Projects**: Using the package to teach API interactions and data processing
 
 ## Project Ideas
 

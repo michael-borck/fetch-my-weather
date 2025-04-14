@@ -12,7 +12,7 @@ from typing import Any, Literal
 import requests
 from pydantic import ValidationError
 
-from .models import WeatherResponse
+from .models import ResponseMetadata, ResponseWrapper, WeatherResponse
 
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
@@ -200,6 +200,136 @@ def set_mock_mode(use_mock: bool) -> bool:
 # --- Helper Functions ---
 
 
+def _create_metadata(
+    is_real_data: bool = True,
+    is_cached: bool = False,
+    is_mock: bool = False,
+    status_code: int | None = None,
+    error_type: str | None = None,
+    error_message: str | None = None,
+    url: str | None = None,
+) -> ResponseMetadata:
+    """
+    Creates a ResponseMetadata object with the given parameters.
+    
+    Args:
+        is_real_data: Whether this is real data from the API.
+        is_cached: Whether this is cached data.
+        is_mock: Whether this is mock/fallback data.
+        status_code: HTTP status code if available.
+        error_type: Type of error if any.
+        error_message: Detailed error message if any.
+        url: URL that was requested.
+        
+    Returns:
+        A ResponseMetadata object.
+    """
+    return ResponseMetadata(
+        is_real_data=is_real_data,
+        is_cached=is_cached,
+        is_mock=is_mock,
+        status_code=status_code,
+        error_type=error_type,
+        error_message=error_message,
+        url=url,
+        timestamp=time.time(),
+    )
+
+
+def _wrap_response(
+    data: Any, metadata: ResponseMetadata, with_metadata: bool
+) -> str | bytes | dict[str, Any] | WeatherResponse | ResponseWrapper:
+    """
+    Wraps the response data with metadata if requested.
+    
+    Args:
+        data: The response data.
+        metadata: The metadata to include.
+        with_metadata: Whether to include metadata.
+        
+    Returns:
+        Either the data directly or a ResponseWrapper with data and metadata.
+    """
+    if with_metadata:
+        return ResponseWrapper(data=data, metadata=metadata)
+    
+    # For Pydantic models, attach metadata directly to the model
+    if isinstance(data, WeatherResponse):
+        data.metadata = metadata
+        return data
+    elif isinstance(data, str):
+        return data
+    elif isinstance(data, bytes):
+        return data
+    elif isinstance(data, dict):
+        return data
+    else:
+        # Convert to string as a last resort
+        return str(data)
+
+
+def _create_mock_data(
+    format: Literal["text", "json", "raw_json", "png"],
+    error_type: str,
+    error_message: str,
+    with_metadata: bool,
+    url: str | None = None,
+    status_code: int | None = None,
+) -> str | bytes | dict[str, Any] | WeatherResponse | ResponseWrapper:
+    """
+    Creates appropriate mock data with metadata for any error situation.
+    
+    Args:
+        format: The requested format.
+        error_type: Type of error that occurred.
+        error_message: Detailed error message.
+        with_metadata: Whether to include metadata.
+        url: URL that was requested.
+        status_code: HTTP status code if available.
+        
+    Returns:
+        Appropriate mock data with metadata.
+    """
+    # Create metadata for the mock response
+    metadata = _create_metadata(
+        is_real_data=False,
+        is_cached=False,
+        is_mock=True,
+        status_code=status_code,
+        error_type=error_type,
+        error_message=error_message,
+        url=url,
+    )
+    
+    # Create appropriate mock data based on format
+    if format == "png":
+        mock_data = _MOCK_DATA["png"]
+        return _wrap_response(mock_data, metadata, with_metadata)
+    elif format == "raw_json":
+        # Create a deep copy and add a note about it being mock data
+        mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
+        # Since we know the mock data is a dictionary, safely cast and add note
+        if isinstance(mock_data, dict):
+            mock_data["note"] = f"Mock data provided due to error: {error_type}"
+            return _wrap_response(mock_data, metadata, with_metadata)
+        else:
+            # This should never happen with our mock data, but just in case
+            return _wrap_response("Error: Invalid mock data format", metadata, with_metadata)
+    elif format == "json":
+        # Convert to Pydantic model
+        try:
+            mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
+            mock_response = WeatherResponse.parse_obj(mock_data)
+            return _wrap_response(mock_response, metadata, with_metadata)
+        except ValidationError:
+            # If model conversion fails, use text format as fallback
+            mock_data = _MOCK_DATA["text"]
+            return _wrap_response(mock_data, metadata, with_metadata)
+    else:  # text format
+        mock_data = _MOCK_DATA["text"]
+        return _wrap_response(mock_data, metadata, with_metadata)
+
+
 def _build_url(
     location: str = "",
     units: str = "",
@@ -368,7 +498,8 @@ def get_weather(
     moon_location_hint: str | None = None,
     format: Literal["text", "json", "raw_json", "png"] = "json",
     use_mock: bool | None = None,
-) -> str | bytes | dict[str, Any] | WeatherResponse:
+    with_metadata: bool = False,
+) -> str | bytes | dict[str, Any] | WeatherResponse | ResponseWrapper:
     """
     Fetches weather or moon phase information from wttr.in.
 
@@ -392,18 +523,30 @@ def get_weather(
                 When "raw_json" is used, returns the raw JSON as a Python dictionary.
         use_mock: If True, use mock data instead of making a real API request.
                  If None, use the global setting (_USE_MOCK_DATA).
+        with_metadata: If True, include metadata about the response (real vs mock, 
+                      cache status, errors). Returns a ResponseWrapper instead of direct data.
 
     Returns:
+        If with_metadata is True: Returns a ResponseWrapper containing both data and metadata.
         If format is "text": Returns the weather report as a string.
         If format is "json": Returns the weather data as a WeatherResponse Pydantic model.
         If format is "raw_json": Returns the raw JSON data as a Python dictionary.
         If format is "png": Returns the PNG image data as bytes.
-        If an error occurs: Returns an error message string.
+        If an error occurs and with_metadata is False: Returns an error message string.
+        If an error occurs and with_metadata is True: Returns fallback data with error details in metadata.
         No exceptions are raised.
     """
     # Input validation (optional but good practice)
     if units not in ["", "m", "u", "M"]:
-        return "Error: Invalid 'units' parameter. Use 'm', 'u', or 'M'."
+        error_msg = "Error: Invalid 'units' parameter. Use 'm', 'u', or 'M'."
+        if with_metadata:
+            return _create_mock_data(
+                format=format,
+                error_type="ValidationError",
+                error_message=error_msg,
+                with_metadata=with_metadata,
+            )
+        return error_msg
     # Add more validation as needed...
 
     # Build the request URL
@@ -425,35 +568,58 @@ def get_weather(
 
     # If mock mode is enabled, return mock data
     if should_use_mock:
+        # Create metadata for mock data
+        metadata = _create_metadata(
+            is_real_data=False,
+            is_cached=False,
+            is_mock=True,
+            url=url,
+        )
+        
         if format == "png" or is_png:
             # Cast to bytes using a type assertion for the type checker
             mock_png: bytes = _MOCK_DATA["png"]  # type: ignore
-            return mock_png
+            return _wrap_response(mock_png, metadata, with_metadata)
         elif format == "json":
             # Make a deep copy to avoid modifying the original mock data
             json_data = json.loads(json.dumps(_MOCK_DATA["json"]))
             try:
                 # Convert to Pydantic model
                 model_data: WeatherResponse = WeatherResponse.parse_obj(json_data)
-                return model_data
+                return _wrap_response(model_data, metadata, with_metadata)
             except ValidationError:
-                error_msg: str = (
+                validation_error_msg: str = (
                     "Error: Mock data doesn't match the expected model structure"
                 )
-                return error_msg
+                if with_metadata:
+                    return _create_mock_data(
+                        format="text",  # Fall back to text format
+                        error_type="ValidationError",
+                        error_message=validation_error_msg,
+                        with_metadata=with_metadata,
+                        url=url,
+                    )
+                return validation_error_msg
         elif format == "raw_json":
             # Return the raw JSON as a dictionary without Pydantic conversion
             # Make a deep copy to avoid modifying the original mock data
             dict_data: dict[str, Any] = json.loads(json.dumps(_MOCK_DATA["json"]))
-            return dict_data
+            return _wrap_response(dict_data, metadata, with_metadata)
         else:
             # Explicit cast to str for type checker
             text_data: str = str(_MOCK_DATA["text"])
-            return text_data
+            return _wrap_response(text_data, metadata, with_metadata)
 
     # Check cache first
     cached_data = _get_from_cache(url)
     if cached_data is not None:
+        # Create metadata for cached data
+        cache_metadata = _create_metadata(
+            is_real_data=True,  # It was real when cached
+            is_cached=True,
+            is_mock=False,
+            url=url,
+        )
         # If it's JSON format and we have a cached string or dict
         if format == "json" or format == "raw_json":
             if isinstance(cached_data, str):
@@ -462,12 +628,32 @@ def get_weather(
                     # For raw_json, just return the parsed dictionary
                     if format == "raw_json":
                         parsed_dict: dict[str, Any] = json_data
-                        return parsed_dict
+                        return _wrap_response(parsed_dict, cache_metadata, with_metadata)
                     # For json, convert to Pydantic model
                     parsed_model: WeatherResponse = WeatherResponse.parse_obj(json_data)
-                    return parsed_model
-                except (json.JSONDecodeError, ValidationError):
-                    # If JSON parsing fails, return as string
+                    return _wrap_response(parsed_model, cache_metadata, with_metadata)
+                except (json.JSONDecodeError, ValidationError) as e:
+                    # If JSON parsing fails, create error metadata
+                    error_metadata = _create_metadata(
+                        is_real_data=False,
+                        is_cached=True,
+                        is_mock=False,
+                        error_type=e.__class__.__name__,
+                        error_message=str(e),
+                        url=url,
+                    )
+                    
+                    if with_metadata:
+                        # Return mock data with error metadata
+                        return _create_mock_data(
+                            format=format,
+                            error_type=e.__class__.__name__,
+                            error_message=str(e),
+                            with_metadata=with_metadata,
+                            url=url,
+                        )
+                        
+                    # If not with_metadata, fall back to original behavior
                     if isinstance(cached_data, str):
                         error_text: str = cached_data
                         return error_text
@@ -477,39 +663,50 @@ def get_weather(
                 # If it's already a WeatherResponse object and format is json
                 if format == "json":
                     weather_model: WeatherResponse = cached_data
-                    return weather_model
+                    return _wrap_response(weather_model, cache_metadata, with_metadata)
                 # If format is raw_json, convert WeatherResponse to dict
                 elif format == "raw_json":
                     # Convert Pydantic model to dict
                     model_dict: dict[str, Any] = json.loads(cached_data.json())
-                    return model_dict
+                    return _wrap_response(model_dict, cache_metadata, with_metadata)
             elif isinstance(cached_data, dict):
                 # If it's a dict and format is raw_json, return as is
                 if format == "raw_json":
                     raw_dict: dict[str, Any] = cached_data
-                    return raw_dict
+                    return _wrap_response(raw_dict, cache_metadata, with_metadata)
                 # If format is json, convert to WeatherResponse
                 try:
                     cached_model: WeatherResponse = WeatherResponse.parse_obj(
                         cached_data
                     )
-                    return cached_model
-                except ValidationError:
+                    return _wrap_response(cached_model, cache_metadata, with_metadata)
+                except ValidationError as e:
                     struct_error: str = (
-                        "Error: Cached data doesn't match the expected model structure"
+                        f"Error: Cached data doesn't match the expected model structure: {str(e)}"
                     )
+                    
+                    if with_metadata:
+                        # Return mock data with error metadata
+                        return _create_mock_data(
+                            format=format,
+                            error_type="ValidationError",
+                            error_message=struct_error,
+                            with_metadata=with_metadata,
+                            url=url,
+                        )
+                    
                     return struct_error
         # Handle other formats or types
         if isinstance(cached_data, str):
             cached_text: str = cached_data
-            return cached_text
+            return _wrap_response(cached_text, cache_metadata, with_metadata)
         elif isinstance(cached_data, bytes):
             binary_data: bytes = cached_data
-            return binary_data
+            return _wrap_response(binary_data, cache_metadata, with_metadata)
         else:
             # For any other type, convert to string
             fallback: str = str(cached_data)
-            return fallback
+            return _wrap_response(fallback, cache_metadata, with_metadata)
 
     # --- Perform the actual request ---
     headers = {"User-Agent": _USER_AGENT}
@@ -521,6 +718,15 @@ def get_weather(
     try:
         response = requests.get(url, headers=headers, timeout=15)  # 15 second timeout
 
+        # Create metadata for the real API response
+        real_metadata = _create_metadata(
+            is_real_data=True,
+            is_cached=False,
+            is_mock=False,
+            status_code=response.status_code,
+            url=url,
+        )
+
         # Check if the request was successful (status code 2xx)
         if 200 <= response.status_code < 300:
             # Determine return type based on request format
@@ -528,7 +734,7 @@ def get_weather(
                 data = response.content  # Return raw bytes for images
                 # Add successful response to cache
                 _add_to_cache(url, data)
-                return data
+                return _wrap_response(data, real_metadata, with_metadata)
             elif format == "json" or format == "raw_json":
                 # For JSON formats, parse the response
                 try:
@@ -540,44 +746,57 @@ def get_weather(
                     # For raw_json, return the dictionary without Pydantic conversion
                     if format == "raw_json":
                         json_dict_data: dict[str, Any] = json_data
-                        return json_dict_data
+                        return _wrap_response(json_dict_data, real_metadata, with_metadata)
 
                     # For standard json, convert to Pydantic model
                     try:
                         weather_response: WeatherResponse = WeatherResponse.parse_obj(
                             json_data
                         )
-                        return weather_response
+                        return _wrap_response(weather_response, real_metadata, with_metadata)
                     except ValidationError as e:
                         validation_error: str = f"Error: JSON data doesn't match the expected model structure: {str(e)}"
+                        
+                        if with_metadata:
+                            # Return mock data with error details
+                            return _create_mock_data(
+                                format=format,
+                                error_type="ValidationError",
+                                error_message=validation_error,
+                                with_metadata=with_metadata,
+                                url=url,
+                                status_code=response.status_code,
+                            )
+                            
                         return validation_error
 
                 except json.JSONDecodeError:
+                    # Create error metadata
+                    error_metadata = _create_metadata(
+                        is_real_data=False,
+                        is_cached=False,
+                        is_mock=True,
+                        status_code=response.status_code,
+                        error_type="JSONDecodeError",
+                        error_message=f"Unable to parse JSON response from {url}",
+                        url=url,
+                    )
+                    
                     # JSON decode failed - for educational use, provide mock data instead of error
-                    if format == "raw_json":
-                        # Return raw dict for raw_json format
-                        mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
-                        mock_data["note"] = "Mock data provided due to JSON parsing error"
-                        json_parse_error_data: dict[str, Any] = mock_data
-                        return json_parse_error_data
-                    else:
-                        # Return Pydantic model for json format
-                        try:
-                            mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
-                            json_parse_mock_response: WeatherResponse = WeatherResponse.parse_obj(
-                                mock_data
-                            )
-                            return json_parse_mock_response
-                        except ValidationError:
-                            # If model conversion fails, return error message
-                            json_error: str = f"Error: Unable to parse JSON response from {url}"
-                            return json_error
+                    return _create_mock_data(
+                        format=format,
+                        error_type="JSONDecodeError",
+                        error_message=f"Unable to parse JSON response from {url}",
+                        with_metadata=with_metadata,
+                        url=url,
+                        status_code=response.status_code,
+                    )
             else:
                 # Text format - return as is
                 data = response.text
                 # Add successful response to cache
                 _add_to_cache(url, data)
-                return data
+                return _wrap_response(data, real_metadata, with_metadata)
         else:
             # Handle non-successful status codes gracefully
             error_message = (
@@ -592,17 +811,41 @@ def get_weather(
             except Exception:
                 pass  # Ignore errors trying to get error details
 
-            # If this is a 503 rate limit error and format is json, return a mock response instead
-            if response.status_code == 503 and (
-                format == "json" or format == "raw_json"
-            ):
+            # Create error metadata
+            error_metadata = _create_metadata(
+                is_real_data=False,
+                is_cached=False,
+                is_mock=with_metadata,  # Will be mocked only if with_metadata
+                status_code=response.status_code,
+                error_type="HTTPError",
+                error_message=error_message,
+                url=url,
+            )
+            
+            # For any error status code, provide fallback data if with_metadata is true
+            if with_metadata:
+                return _create_mock_data(
+                    format=format,
+                    error_type="HTTPError", 
+                    error_message=error_message,
+                    with_metadata=with_metadata,
+                    url=url,
+                    status_code=response.status_code,
+                )
+            
+            # Without metadata, still provide mock data for 503 errors with JSON formats
+            if response.status_code == 503 and (format == "json" or format == "raw_json"):
                 # Provide a mock response with a note about rate limiting
                 if format == "raw_json":
                     # Make a deep copy and add a note about it being mock data
                     mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
-                    mock_data["note"] = "Mock data provided due to rate limiting"
-                    raw_json_data: dict[str, Any] = mock_data
-                    return raw_json_data
+                    if isinstance(mock_data, dict):
+                        mock_data["note"] = "Mock data provided due to rate limiting"
+                        raw_json_data: dict[str, Any] = mock_data
+                        return raw_json_data
+                    else:
+                        # This should never happen with our mock data, but just in case
+                        return "Error: Invalid mock data format"
                 else:
                     # Convert mock data to Pydantic model
                     try:
@@ -615,17 +858,32 @@ def get_weather(
                         # If model conversion fails, still return the error message
                         pass
 
+            # Otherwise return the error message
             return error_message
 
     except Exception as e:
-        if str(e.__class__.__name__) == "Timeout":
-            return f"Error: Request timed out while connecting to {url}"
-        elif str(e.__class__.__name__) == "ConnectionError":
-            return f"Error: Could not connect to {url}. Check network connection."
+        error_type = e.__class__.__name__
+        if error_type == "Timeout":
+            error_message = f"Error: Request timed out while connecting to {url}"
+        elif error_type == "ConnectionError":
+            error_message = f"Error: Could not connect to {url}. Check network connection."
         elif "requests" in str(e.__class__.__module__):
             # Catch any other requests-related error
-            return f"Error: An unexpected network error occurred: {e}"
+            error_message = f"Error: An unexpected network error occurred: {e}"
         else:
             # Catch any other unexpected error during processing
             # This shouldn't normally happen with the above catches, but belt-and-suspenders
-            return f"Error: An unexpected error occurred: {e}"
+            error_message = f"Error: An unexpected error occurred: {e}"
+            
+        # If with_metadata is enabled, return mock data with error information
+        if with_metadata:
+            return _create_mock_data(
+                format=format,
+                error_type=error_type,
+                error_message=error_message,
+                with_metadata=with_metadata,
+                url=url,
+            )
+            
+        # Otherwise return the error message
+        return error_message

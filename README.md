@@ -13,6 +13,7 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 - 🚀 Built-in caching to be nice to the wttr.in service
 - 🧪 Mock mode for development and testing without API rate limits
 - 🛡️ Beginner-friendly error handling (no exceptions)
+- 📊 Response metadata for tracking data source and error information
 - 📚 Designed for teaching Python and API interactions
 - 🤖 LLM-ready with comprehensive [LLM guide](LLM-GUIDE.md) you can upload to AI assistants
 
@@ -179,6 +180,36 @@ else:
     print("Weather data received successfully")
 ```
 
+### Response Metadata
+
+For more advanced error handling and tracking of data sources, use the `with_metadata` parameter:
+
+```python
+import fetch_my_weather
+from fetch_my_weather import ResponseWrapper
+
+# Get weather with metadata information
+response = fetch_my_weather.get_weather(location="London", with_metadata=True)
+
+# Response is a wrapper containing both data and metadata
+if isinstance(response, ResponseWrapper):
+    # Check metadata properties
+    metadata = response.metadata
+    print(f"Data source: {'API' if metadata.is_real_data else 'Cache' if metadata.is_cached else 'Mock'}")
+    
+    # If there was an error, it will be in the metadata
+    if metadata.error_type:
+        print(f"Error: {metadata.error_message}")
+        # Data will be mock data instead of an error string
+    
+    # Access the actual data (always available, even during errors)
+    data = response.data
+    if hasattr(data, "current_condition") and data.current_condition:
+        print(f"Temperature: {data.current_condition[0].temp_C}°C")
+```
+
+When using the metadata feature, the package will always return usable data rather than error strings, falling back to mock data during API errors or rate limiting.
+
 ## Pydantic Models
 
 When using the JSON format (default), the package returns a structured `WeatherResponse` Pydantic model that contains:
@@ -225,6 +256,7 @@ The `get_weather()` function accepts these parameters:
 | `moon_date` | str | Date for moon phase in `YYYY-MM-DD` format (with `is_moon=True`) |
 | `moon_location_hint` | str | Location hint for moon phase (e.g., `,+US`, `,+Paris`) |
 | `use_mock` | bool | If `True`, use mock data instead of making a real API request |
+| `with_metadata` | bool | If `True`, returns both data and metadata about the response source and any errors |
 
 ## Documentation
 

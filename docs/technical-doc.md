@@ -74,6 +74,8 @@ The package uses Pydantic models to provide structured, type-safe access to JSON
 - `HourlyForecast`: Weather forecast for a specific hour
 - `Request`: Information about the API request (query string and location type)
 - `Astronomy`: Sunrise, sunset, and moon phase data
+- `ResponseMetadata`: Metadata about the response source and error details
+- `ResponseWrapper`: Container for both response data and metadata
 
 These models provide validation, type hints, and structured access to the data.
 
@@ -110,16 +112,25 @@ HTTP requests are made using the `requests` library. This section of the code:
 - Converts JSON responses to Pydantic models
 - Handles various error conditions
 
-### 6. Error Handling
+### 6. Error Handling and Response Metadata
 
-The package uses a consistent approach to error handling:
+The package uses two approaches to error handling:
 
-- No exceptions are raised to the user
-- All errors are caught and converted to descriptive error messages
-- Error messages are returned as strings that start with "Error:"
-- HTTP errors include status codes
-- Network errors include details about the failure
-- JSON parsing errors include information about the validation failure
+1. **Basic Error Handling (default)**:
+   - No exceptions are raised to the user
+   - All errors are caught and converted to descriptive error messages
+   - Error messages are returned as strings that start with "Error:"
+   - HTTP errors include status codes
+   - Network errors include details about the failure
+   - JSON parsing errors include information about the validation failure
+
+2. **Advanced Error Handling (with `with_metadata=True`)**:
+   - Returns a `ResponseWrapper` containing both data and metadata
+   - The `ResponseMetadata` includes information about data source (real/cached/mock)
+   - Error details are captured in the metadata (`error_type`, `error_message`, etc.)
+   - Instead of error strings, usable mock data is returned along with error metadata
+   - Always returns data that can be used, even in error scenarios
+   - Particularly useful for educational contexts where resilience is important
 
 ## Implementation Details
 
@@ -136,9 +147,13 @@ The cache is implemented as a simple in-memory dictionary. This approach was cho
 _cache = {}
 ```
 
-### Error Return Pattern
+### Error Return Patterns
 
-Instead of using exceptions, the package returns error information using a pattern recognition approach:
+The package supports two error handling patterns:
+
+#### Basic Pattern
+
+The default approach returns error messages as strings:
 
 ```python
 # To return an error
@@ -152,6 +167,27 @@ else:
 ```
 
 This pattern was chosen to make error handling more accessible to beginners.
+
+#### Metadata Pattern
+
+The advanced approach with `with_metadata=True` returns a `ResponseWrapper` with error details:
+
+```python
+# Get response with metadata
+response = get_weather(location="...", with_metadata=True)
+
+# Check metadata for errors
+if isinstance(response, ResponseWrapper):
+    if response.metadata.error_type:
+        print(f"Error occurred: {response.metadata.error_type}")
+        print(f"Error message: {response.metadata.error_message}")
+    
+    # The data is always accessible, even in error cases (uses mock data)
+    data = response.data
+    # Process data...
+```
+
+This approach provides more detailed error information while ensuring there's always usable data.
 
 ### Format Selection and Response Processing
 

@@ -26,6 +26,7 @@ The `fetch-my-weather` package was specifically designed to support programming 
 - Implementing caching concepts
 - Parameter combinations for different output formats
 - Creating small applications with external data
+- Using response metadata for enhanced error handling
 
 ### Advanced Level
 - Understanding URL construction for APIs
@@ -33,6 +34,7 @@ The `fetch-my-weather` package was specifically designed to support programming 
 - Implementing more sophisticated caching mechanisms
 - Creating GUIs that display weather data
 - Building on top of existing packages
+- Advanced error handling and service degradation strategies
 
 ## Suggested Course Integration
 
@@ -88,28 +90,32 @@ Incorporate `fetch-my-weather` when teaching:
 5. **Assessment (5 min)**
    - Quick quiz on API concepts
 
-### Lesson 2: Error Handling (45 minutes)
+### Lesson 2: Error Handling (60 minutes)
 
 **Objectives:**
 - Learn to check for and handle errors
 - Understand why error handling is important
+- Explore basic and advanced error handling approaches
 
 **Activities:**
 1. **Review (5 min)**
    - Quick recap of API calls
 
-2. **Demonstration (10 min)**
+2. **Demonstration (15 min)**
    - Show what happens with invalid locations
    - Demonstrate how to check for error responses
+   - Introduce the metadata approach for advanced error handling
 
-3. **Guided Practice (20 min)**
+3. **Guided Practice (30 min)**
    - Students intentionally create error conditions
-   - Students write code to handle errors gracefully
+   - Students write code to handle errors using the basic approach
+   - Students use the metadata approach to get information about response sources
    - Students create a function that retries on error
 
 4. **Discussion (10 min)**
    - Why is error handling important in real applications?
    - How does this approach differ from exceptions?
+   - When would you use metadata vs. basic error checking?
 
 ### Lesson 3: Working with Different Data Formats (90 minutes)
 
@@ -230,11 +236,14 @@ Each project includes a detailed description, code samples, and extension ideas 
 **Q: Why doesn't `fetch-my-weather` raise exceptions like other libraries?**  
 A: It's designed to be beginner-friendly. Checking if a string starts with "Error:" is simpler than try/except blocks for beginners.
 
+**Q: When should I use the metadata feature instead of basic error checking?**  
+A: Use metadata when you need more information about the response source (real API, cache, or mock) or when you want to gracefully handle errors by always having usable data. It's particularly useful when multiple users might hit rate limits together.
+
 **Q: How can I extract specific data (like temperature) from the text output?**  
 A: You can use string operations like `split()` and regular expressions. This is intentionally part of the learning process!
 
 **Q: Is there a limit to how many requests I can make?**  
-A: The underlying weather service may have rate limits. That's why `fetch-my-weather` includes caching to minimize requests. This is a good opportunity to discuss API etiquette.
+A: The underlying weather service may have rate limits. That's why `fetch-my-weather` includes caching to minimize requests and provides fallback mock data. This is a good opportunity to discuss API etiquette.
 
 **Q: Why use this instead of a more advanced weather API?**  
 A: `fetch-my-weather` is specifically designed for learning. It requires no API keys, has minimal setup, and provides a gentle introduction to API concepts.

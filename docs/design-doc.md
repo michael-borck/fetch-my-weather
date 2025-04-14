@@ -71,13 +71,24 @@ Unlike many modern API wrappers, `fetch-my-weather` returns plain text strings o
 
 ### Why No Exceptions?
 
-The package never raises exceptions to the caller, instead returning error messages as strings.
+The package never raises exceptions to the caller, instead returning error messages as strings or metadata with fallback data.
 
 **Rationale:**
 - Exception handling is often confusing for beginners
 - Pattern-based error checking (`if result.startswith("Error:")`) is easy to understand
 - Consistent with the string-based return values
 - Simpler control flow in user code
+
+### Why Response Metadata?
+
+The package offers an optional metadata approach through the `with_metadata=True` parameter, which returns both data and metadata about the response.
+
+**Rationale:**
+- Provides more context about the data source (real API, cache, or mock)
+- Always returns usable data (falling back to mock data) rather than error strings
+- Enables graceful degradation during high traffic or API rate limiting
+- Offers more advanced error handling while maintaining the beginner-friendly approach
+- Opt-in design maintains backward compatibility
 
 ### Why In-Memory Caching?
 

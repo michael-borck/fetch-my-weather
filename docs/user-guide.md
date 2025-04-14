@@ -19,9 +19,10 @@ Welcome to `fetch-my-weather`, a beginner-friendly Python package for accessing 
 7. [Caching](#caching)
 8. [Mock Mode](#mock-mode)
 9. [Error Handling](#error-handling)
-10. [Advanced Usage](#advanced-usage)
-11. [Common Issues](#common-issues)
-12. [Educational Notes](#educational-notes)
+10. [Response Metadata](#response-metadata)
+11. [Advanced Usage](#advanced-usage)
+12. [Common Issues](#common-issues)
+13. [Educational Notes](#educational-notes)
 
 ## Installation
 
@@ -335,6 +336,49 @@ elif isinstance(result, fetch_my_weather.WeatherResponse):
 else:
     print("Weather data received (non-JSON format)")
 ```
+
+## Response Metadata
+
+For more advanced error handling and to get information about the source of your weather data, you can use the `with_metadata=True` parameter. This returns a `ResponseWrapper` object that contains both the weather data and metadata about the response:
+
+```python
+import fetch_my_weather
+from fetch_my_weather import ResponseWrapper
+
+# Get weather with metadata
+response = fetch_my_weather.get_weather(
+    location="London",
+    with_metadata=True
+)
+
+if isinstance(response, ResponseWrapper):
+    # Access metadata
+    metadata = response.metadata
+    print(f"Data source:")
+    print(f"- Real API data: {metadata.is_real_data}")
+    print(f"- Cached data: {metadata.is_cached}")
+    print(f"- Mock data: {metadata.is_mock}")
+    
+    # Check for errors
+    if metadata.error_type:
+        print(f"Error occurred: {metadata.error_type}")
+        print(f"Error message: {metadata.error_message}")
+    
+    # Access the actual data
+    data = response.data
+    if hasattr(data, "current_condition") and data.current_condition:
+        current = data.current_condition[0]
+        print(f"Temperature: {current.temp_C}°C")
+```
+
+The metadata feature is especially useful for:
+
+- Understanding where your data is coming from (API, cache, or mock)
+- Diagnosing issues with API calls without losing access to weather data
+- Learning applications where students need to understand data sources
+- Building more resilient applications that can handle API outages
+
+When `with_metadata=True` is used, the package will always return usable weather data by falling back to mock data in case of errors, while still providing detailed information about what went wrong.
 
 ## Advanced Usage
 

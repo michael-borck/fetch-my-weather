@@ -5,9 +5,27 @@ These models define the structure of the JSON data returned by the wttr.in API,
 providing type safety, validation, and easier access to weather data.
 """
 
-from typing import List, Optional
+from typing import List, Optional, Any, Dict, Union
 
 from pydantic import BaseModel, Field
+
+
+class ResponseMetadata(BaseModel):
+    """Metadata about the response from fetch-my-weather."""
+    
+    # Source of data
+    is_real_data: bool = True  # Whether this is real data from the API
+    is_cached: bool = False  # Whether this came from cache
+    is_mock: bool = False  # Whether this is fallback mock data
+    
+    # Error information
+    status_code: Optional[int] = None  # HTTP status code if available
+    error_type: Optional[str] = None  # Type of error if any (e.g., "JSONDecodeError")
+    error_message: Optional[str] = None  # Detailed error message if any
+    
+    # Request information
+    url: Optional[str] = None  # URL that was requested
+    timestamp: Optional[float] = None  # When the request was made
 
 
 class WeatherDesc(BaseModel):
@@ -165,3 +183,13 @@ class WeatherResponse(BaseModel):
     nearest_area: List[NearestArea] = Field(default_factory=list)
     request: List[Request] = Field(default_factory=list)
     weather: List[DailyForecast] = Field(default_factory=list)
+    
+    # Metadata for tracking response type and status
+    metadata: ResponseMetadata = Field(default_factory=ResponseMetadata)
+
+
+class ResponseWrapper(BaseModel):
+    """Wrapper for any response with metadata."""
+    
+    data: Any  # The actual response data (text, bytes, dict)
+    metadata: ResponseMetadata  # Metadata about the response
