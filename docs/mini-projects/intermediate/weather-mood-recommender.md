@@ -24,36 +24,67 @@ activities = {
 }
 
 def recommend_activity(location=""):
-    # Get weather data
-    weather_data = fetch_my_weather.get_weather(location=location, view_options="q")
+    # Get weather data using JSON format and metadata for better handling
+    response = fetch_my_weather.get_weather(
+        location=location, 
+        format="json",
+        with_metadata=True
+    )
     
-    if isinstance(weather_data, str) and not weather_data.startswith("Error:"):
-        # Determine weather condition (this is a simplified approach)
-        weather_lower = weather_data.lower()
+    # Extract data and metadata
+    metadata = response.metadata
+    weather_data = response.data
+    
+    # Check if using mock data and notify if there was an error
+    if metadata.is_mock and metadata.error_message:
+        print(f"Note: Using mock weather data. ({metadata.error_message})")
+    
+    # Get the current weather condition
+    condition = "unknown"
+    temperature = 0
+    
+    if weather_data.current_condition:
+        current = weather_data.current_condition[0]
         
-        if "sunny" in weather_lower or "clear" in weather_lower:
+        # Get weather description if available
+        weather_desc = ""
+        if current.weatherDesc and current.weatherDesc[0].value:
+            weather_desc = current.weatherDesc[0].value.lower()
+            
+        # Get temperature
+        if current.temp_C:
+            temperature = int(current.temp_C)
+        
+        # Determine condition based on description and temperature
+        if "sunny" in weather_desc or "clear" in weather_desc:
             condition = "sunny"
-        elif "rain" in weather_lower or "drizzle" in weather_lower or "shower" in weather_lower:
+        elif "rain" in weather_desc or "drizzle" in weather_desc or "shower" in weather_desc:
             condition = "rainy"
-        elif "cloud" in weather_lower or "overcast" in weather_lower:
+        elif "cloud" in weather_desc or "overcast" in weather_desc:
             condition = "cloudy"
-        elif "snow" in weather_lower or "blizzard" in weather_lower:
+        elif "snow" in weather_desc or "blizzard" in weather_desc:
             condition = "snowy"
-        elif any(temp in weather_lower for temp in ["0 °c", "1 °c", "2 °c", "3 °c", "4 °c", "5 °c"]):
+        elif temperature <= 5:
             condition = "cold"
-        elif any(temp in weather_lower for temp in ["30 °c", "31 °c", "32 °c", "33 °c", "34 °c", "35 °c"]):
+        elif temperature >= 30:
             condition = "hot"
         else:
-            condition = random.choice(["sunny", "cloudy", "rainy"])
+            # Default to a condition based on temperature range
+            if temperature < 10:
+                condition = "cold"
+            elif temperature > 25:
+                condition = "hot"
+            else:
+                condition = random.choice(["sunny", "cloudy", "rainy"])
         
         # Get random activity for the condition
         if condition in activities:
             activity = random.choice(activities[condition])
-            return f"Based on the {condition} weather, you could: {activity}"
+            return f"Based on the {condition} weather ({temperature}°C), you could: {activity}"
         else:
             return "No specific recommendation for this weather."
     else:
-        return f"Could not get weather: {weather_data}"
+        return "Could not get weather data to make recommendations."
 
 # Location to check
 my_location = "London"

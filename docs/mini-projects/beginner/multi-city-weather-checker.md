@@ -18,12 +18,36 @@ def check_multiple_cities(cities):
     
     for city in cities:
         print(f"Weather in {city}:")
-        weather = fetch_my_weather.get_weather(location=city, view_options="0q")
         
-        if isinstance(weather, str) and not weather.startswith("Error:"):
-            print(weather)
-        else:
-            print(f"Could not get weather for {city}: {weather}")
+        # Get weather with metadata to handle errors gracefully
+        response = fetch_my_weather.get_weather(
+            location=city, 
+            format="json",  # Use JSON format with Pydantic models
+            with_metadata=True  # Get metadata about the response
+        )
+        
+        # Response is now a ResponseWrapper with both data and metadata
+        metadata = response.metadata
+        data = response.data
+        
+        # Check if this is real or mock data
+        if metadata.is_mock:
+            print(f"Note: Using mock data for {city}")
+            if metadata.error_message:
+                print(f"(Error: {metadata.error_message})")
+                
+        # Display current weather information using the Pydantic model
+        if data.current_condition:
+            current = data.current_condition[0]
+            if current.weatherDesc:
+                condition = current.weatherDesc[0].value
+            else:
+                condition = "Unknown"
+                
+            print(f"Temperature: {current.temp_C}°C / {current.temp_F}°F")
+            print(f"Condition: {condition}")
+            print(f"Humidity: {current.humidity}%")
+            print(f"Wind: {current.windspeedKmph} km/h, {current.winddir16Point}")
             
         print("-" * 40)
         time.sleep(1)  # Be nice to the weather service

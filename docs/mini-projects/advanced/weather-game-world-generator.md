@@ -42,16 +42,67 @@ class WeatherGame:
         """Get real-world weather and set game environment"""
         print("Connecting to weather service to generate your world...")
         
-        weather_text = fetch_my_weather.get_weather(location=location, view_options="q")
+        # Use the JSON format and metadata feature for better error handling
+        response = fetch_my_weather.get_weather(
+            location=location, 
+            format="json",  # Get structured data with Pydantic models
+            with_metadata=True  # Get metadata about the response
+        )
         
-        if isinstance(weather_text, str) and not weather_text.startswith("Error:"):
-            # Extract key weather information
-            self.current_weather = self.parse_weather(weather_text)
+        # Extract data and metadata
+        metadata = response.metadata
+        weather_data = response.data
+        
+        if metadata.is_mock:
+            if metadata.error_message:
+                print(f"Note: Using mock data (Error: {metadata.error_message})")
+            else:
+                print("Note: Using mock data")
+        
+        # Extract game-relevant weather information from the structured data
+        if weather_data.current_condition:
+            current = weather_data.current_condition[0]
+            
+            # Get the weather condition
+            condition = "clear"
+            if current.weatherDesc and current.weatherDesc[0].value:
+                weather_desc = current.weatherDesc[0].value.lower()
+                if "rain" in weather_desc or "shower" in weather_desc:
+                    condition = "rainy"
+                elif "snow" in weather_desc or "blizzard" in weather_desc:
+                    condition = "snowy"
+                elif "cloud" in weather_desc or "overcast" in weather_desc:
+                    condition = "cloudy"
+                elif "fog" in weather_desc or "mist" in weather_desc:
+                    condition = "foggy"
+                elif "storm" in weather_desc or "thunder" in weather_desc:
+                    condition = "stormy"
+            
+            # Determine if it's day or night
+            is_day = True
+            if weather_data.weather and weather_data.weather[0].astronomy:
+                # Get the first day's astronomy data
+                astronomy = weather_data.weather[0].astronomy[0]
+                # Use current time to compare with sunrise/sunset
+                current_time = datetime.now().strftime("%H:%M")
+                if hasattr(astronomy, "sunrise") and hasattr(astronomy, "sunset"):
+                    # Simple comparison, assuming 24-hour format
+                    if current_time < astronomy.sunrise or current_time > astronomy.sunset:
+                        is_day = False
+            
+            # Create the weather data structure
+            self.current_weather = {
+                "temperature": int(current.temp_C) if current.temp_C else 20,
+                "condition": condition,
+                "wind_speed": int(current.windspeedKmph) if current.windspeedKmph else 5,
+                "humidity": int(current.humidity) if current.humidity else 60,
+                "is_day": is_day
+            }
+            
             print(f"Weather data received: {self.current_weather['condition']}, {self.current_weather['temperature']}°C")
             return True
         else:
-            print(f"Error getting weather: {weather_text}")
-            # Use default weather
+            # Fallback to default weather if no current condition data
             self.current_weather = {
                 "temperature": 20,
                 "condition": "clear",
@@ -61,48 +112,6 @@ class WeatherGame:
             }
             print("Using default weather settings.")
             return False
-    
-    def parse_weather(self, weather_text):
-        """Parse weather text into game-relevant data"""
-        weather_lower = weather_text.lower()
-        
-        # Extract temperature
-        temp_match = re.search(r'(\-?\d+)\s*°C', weather_text)
-        temperature = int(temp_match.group(1)) if temp_match else 20
-        
-        # Extract wind speed
-        wind_match = re.search(r'(\d+)\s*km/h', weather_text)
-        wind_speed = int(wind_match.group(1)) if wind_match else 5
-        
-        # Extract humidity
-        humidity_match = re.search(r'humidity\D+(\d+)', weather_lower)
-        humidity = int(humidity_match.group(1)) if humidity_match else 60
-        
-        # Determine time of day
-        is_day = True
-        if "night" in weather_lower or "evening" in weather_lower:
-            is_day = False
-        
-        # Determine condition
-        condition = "clear"
-        if "rain" in weather_lower or "shower" in weather_lower:
-            condition = "rainy"
-        elif "snow" in weather_lower or "blizzard" in weather_lower:
-            condition = "snowy"
-        elif "cloud" in weather_lower or "overcast" in weather_lower:
-            condition = "cloudy"
-        elif "fog" in weather_lower or "mist" in weather_lower:
-            condition = "foggy"
-        elif "storm" in weather_lower or "thunder" in weather_lower:
-            condition = "stormy"
-        
-        return {
-            "temperature": temperature,
-            "condition": condition,
-            "wind_speed": wind_speed,
-            "humidity": humidity,
-            "is_day": is_day
-        }
     
     def generate_world(self):
         """Generate game world based on weather"""
