@@ -17,7 +17,7 @@ from .models import WeatherResponse
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
 _CACHE_DURATION_SECONDS = 600  # Cache data for 10 minutes
-_USER_AGENT = "fetch-my-weather/0.2.2"  # Be polite and identify our package
+_USER_AGENT = "fetch-my-weather/0.2.3"  # Be polite and identify our package
 _USE_MOCK_DATA = False  # Flag to use mock data instead of real API
 
 # --- In-memory Cache ---
