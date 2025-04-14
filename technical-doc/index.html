@@ -943,9 +943,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6-error-handling" class="md-nav__link">
+  <a href="#6-error-handling-and-response-metadata" class="md-nav__link">
     <span class="md-ellipsis">
-      6. Error Handling
+      6. Error Handling and Response Metadata
     </span>
   </a>
   
@@ -976,11 +976,35 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#error-return-pattern" class="md-nav__link">
+  <a href="#error-return-patterns" class="md-nav__link">
     <span class="md-ellipsis">
-      Error Return Pattern
+      Error Return Patterns
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Error Return Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Pattern
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1256,9 +1280,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6-error-handling" class="md-nav__link">
+  <a href="#6-error-handling-and-response-metadata" class="md-nav__link">
     <span class="md-ellipsis">
-      6. Error Handling
+      6. Error Handling and Response Metadata
     </span>
   </a>
   
@@ -1289,11 +1313,35 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#error-return-pattern" class="md-nav__link">
+  <a href="#error-return-patterns" class="md-nav__link">
     <span class="md-ellipsis">
-      Error Return Pattern
+      Error Return Patterns
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Error Return Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Pattern
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1450,7 +1498,10 @@
 <li><code>NearestArea</code>: Location information about the requested area</li>
 <li><code>DailyForecast</code>: Weather forecast for a specific day </li>
 <li><code>HourlyForecast</code>: Weather forecast for a specific hour</li>
+<li><code>Request</code>: Information about the API request (query string and location type)</li>
 <li><code>Astronomy</code>: Sunrise, sunset, and moon phase data</li>
+<li><code>ResponseMetadata</code>: Metadata about the response source and error details</li>
+<li><code>ResponseWrapper</code>: Container for both response data and metadata</li>
 </ul>
 <p>These models provide validation, type hints, and structured access to the data.</p>
 <h3 id="3-caching-system">3. Caching System<a class="headerlink" href="#3-caching-system" title="Permanent link">&para;</a></h3>
@@ -1481,16 +1532,28 @@
 <li>Converts JSON responses to Pydantic models</li>
 <li>Handles various error conditions</li>
 </ul>
-<h3 id="6-error-handling">6. Error Handling<a class="headerlink" href="#6-error-handling" title="Permanent link">&para;</a></h3>
-<p>The package uses a consistent approach to error handling:</p>
-<ul>
+<h3 id="6-error-handling-and-response-metadata">6. Error Handling and Response Metadata<a class="headerlink" href="#6-error-handling-and-response-metadata" title="Permanent link">&para;</a></h3>
+<p>The package uses two approaches to error handling:</p>
+<ol>
+<li><strong>Basic Error Handling (default)</strong>:</li>
 <li>No exceptions are raised to the user</li>
 <li>All errors are caught and converted to descriptive error messages</li>
 <li>Error messages are returned as strings that start with "Error:"</li>
 <li>HTTP errors include status codes</li>
 <li>Network errors include details about the failure</li>
-<li>JSON parsing errors include information about the validation failure</li>
-</ul>
+<li>
+<p>JSON parsing errors include information about the validation failure</p>
+</li>
+<li>
+<p><strong>Advanced Error Handling (with <code>with_metadata=True</code>)</strong>:</p>
+</li>
+<li>Returns a <code>ResponseWrapper</code> containing both data and metadata</li>
+<li>The <code>ResponseMetadata</code> includes information about data source (real/cached/mock)</li>
+<li>Error details are captured in the metadata (<code>error_type</code>, <code>error_message</code>, etc.)</li>
+<li>Instead of error strings, usable mock data is returned along with error metadata</li>
+<li>Always returns data that can be used, even in error scenarios</li>
+<li>Particularly useful for educational contexts where resilience is important</li>
+</ol>
 <h2 id="implementation-details">Implementation Details<a class="headerlink" href="#implementation-details" title="Permanent link">&para;</a></h2>
 <h3 id="in-memory-cache">In-memory Cache<a class="headerlink" href="#in-memory-cache" title="Permanent link">&para;</a></h3>
 <p>The cache is implemented as a simple in-memory dictionary. This approach was chosen for simplicity and educational value. It means:</p>
@@ -1502,8 +1565,10 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Format: { &quot;url&quot;: (timestamp, data) }</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
 </span></code></pre></div>
-<h3 id="error-return-pattern">Error Return Pattern<a class="headerlink" href="#error-return-pattern" title="Permanent link">&para;</a></h3>
-<p>Instead of using exceptions, the package returns error information using a pattern recognition approach:</p>
+<h3 id="error-return-patterns">Error Return Patterns<a class="headerlink" href="#error-return-patterns" title="Permanent link">&para;</a></h3>
+<p>The package supports two error handling patterns:</p>
+<h4 id="basic-pattern">Basic Pattern<a class="headerlink" href="#basic-pattern" title="Permanent link">&para;</a></h4>
+<p>The default approach returns error messages as strings:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># To return an error</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -1514,21 +1579,37 @@
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="c1"># Process valid result</span>
 </span></code></pre></div>
 <p>This pattern was chosen to make error handling more accessible to beginners.</p>
+<h4 id="metadata-pattern">Metadata Pattern<a class="headerlink" href="#metadata-pattern" title="Permanent link">&para;</a></h4>
+<p>The advanced approach with <code>with_metadata=True</code> returns a <code>ResponseWrapper</code> with error details:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Get response with metadata</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">response</span> <span class="o">=</span> <span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">with_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Check metadata for errors</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">ResponseWrapper</span><span class="p">):</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">error_type</span><span class="p">:</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occurred: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error message: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="c1"># The data is always accessible, even in error cases (uses mock data)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="c1"># Process data...</span>
+</span></code></pre></div>
+<p>This approach provides more detailed error information while ensuring there's always usable data.</p>
 <h3 id="format-selection-and-response-processing">Format Selection and Response Processing<a class="headerlink" href="#format-selection-and-response-processing" title="Permanent link">&para;</a></h3>
 <p>The package uses the <code>format</code> parameter to determine how to process the response:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span> <span class="ow">or</span> <span class="n">is_png</span><span class="p">:</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>  <span class="c1"># Return raw bytes for images</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;raw_json&quot;</span><span class="p">:</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">return</span> <span class="n">json_data</span>  <span class="c1"># Return raw Python dictionary</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">weather_response</span> <span class="o">=</span> <span class="n">WeatherResponse</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>  <span class="c1"># Convert to Pydantic model</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="k">return</span> <span class="n">weather_response</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="k">else</span><span class="p">:</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>     <span class="c1"># Return decoded text</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span> <span class="ow">or</span> <span class="n">is_png</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>  <span class="c1"># Return raw bytes for images</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;raw_json&quot;</span><span class="p">:</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="k">return</span> <span class="n">json_data</span>  <span class="c1"># Return raw Python dictionary</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">weather_response</span> <span class="o">=</span> <span class="n">WeatherResponse</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>  <span class="c1"># Convert to Pydantic model</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="k">return</span> <span class="n">weather_response</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>     <span class="c1"># Return decoded text</span>
 </span></code></pre></div>
 <p>The older <code>is_png</code> parameter is still supported for backward compatibility.</p>
 <h2 id="performance-considerations">Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permanent link">&para;</a></h2>

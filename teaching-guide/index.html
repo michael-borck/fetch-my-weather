@@ -936,9 +936,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lesson-2-error-handling-45-minutes" class="md-nav__link">
+  <a href="#lesson-2-error-handling-60-minutes" class="md-nav__link">
     <span class="md-ellipsis">
-      Lesson 2: Error Handling (45 minutes)
+      Lesson 2: Error Handling (60 minutes)
     </span>
   </a>
   
@@ -1370,9 +1370,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lesson-2-error-handling-45-minutes" class="md-nav__link">
+  <a href="#lesson-2-error-handling-60-minutes" class="md-nav__link">
     <span class="md-ellipsis">
-      Lesson 2: Error Handling (45 minutes)
+      Lesson 2: Error Handling (60 minutes)
     </span>
   </a>
   
@@ -1614,6 +1614,7 @@
 <li>Implementing caching concepts</li>
 <li>Parameter combinations for different output formats</li>
 <li>Creating small applications with external data</li>
+<li>Using response metadata for enhanced error handling</li>
 </ul>
 <h3 id="advanced-level">Advanced Level<a class="headerlink" href="#advanced-level" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1622,6 +1623,7 @@
 <li>Implementing more sophisticated caching mechanisms</li>
 <li>Creating GUIs that display weather data</li>
 <li>Building on top of existing packages</li>
+<li>Advanced error handling and service degradation strategies</li>
 </ul>
 <h2 id="suggested-course-integration">Suggested Course Integration<a class="headerlink" href="#suggested-course-integration" title="Permanent link">&para;</a></h2>
 <h3 id="python-basics-course-week-3-4">Python Basics Course (Week 3-4)<a class="headerlink" href="#python-basics-course-week-3-4" title="Permanent link">&para;</a></h3>
@@ -1679,24 +1681,27 @@
 </li>
 <li>Quick quiz on API concepts</li>
 </ol>
-<h3 id="lesson-2-error-handling-45-minutes">Lesson 2: Error Handling (45 minutes)<a class="headerlink" href="#lesson-2-error-handling-45-minutes" title="Permanent link">&para;</a></h3>
+<h3 id="lesson-2-error-handling-60-minutes">Lesson 2: Error Handling (60 minutes)<a class="headerlink" href="#lesson-2-error-handling-60-minutes" title="Permanent link">&para;</a></h3>
 <p><strong>Objectives:</strong>
 - Learn to check for and handle errors
-- Understand why error handling is important</p>
+- Understand why error handling is important
+- Explore basic and advanced error handling approaches</p>
 <p><strong>Activities:</strong>
 1. <strong>Review (5 min)</strong>
    - Quick recap of API calls</p>
 <ol>
-<li><strong>Demonstration (10 min)</strong></li>
+<li><strong>Demonstration (15 min)</strong></li>
 <li>Show what happens with invalid locations</li>
+<li>Demonstrate how to check for error responses</li>
 <li>
-<p>Demonstrate how to check for error responses</p>
+<p>Introduce the metadata approach for advanced error handling</p>
 </li>
 <li>
-<p><strong>Guided Practice (20 min)</strong></p>
+<p><strong>Guided Practice (30 min)</strong></p>
 </li>
 <li>Students intentionally create error conditions</li>
-<li>Students write code to handle errors gracefully</li>
+<li>Students write code to handle errors using the basic approach</li>
+<li>Students use the metadata approach to get information about response sources</li>
 <li>
 <p>Students create a function that retries on error</p>
 </li>
@@ -1705,6 +1710,7 @@
 </li>
 <li>Why is error handling important in real applications?</li>
 <li>How does this approach differ from exceptions?</li>
+<li>When would you use metadata vs. basic error checking?</li>
 </ol>
 <h3 id="lesson-3-working-with-different-data-formats-90-minutes">Lesson 3: Working with Different Data Formats (90 minutes)<a class="headerlink" href="#lesson-3-working-with-different-data-formats-90-minutes" title="Permanent link">&para;</a></h3>
 <p><strong>Objectives:</strong>
@@ -1825,10 +1831,12 @@
 <h2 id="common-student-questions-and-answers">Common Student Questions and Answers<a class="headerlink" href="#common-student-questions-and-answers" title="Permanent link">&para;</a></h2>
 <p><strong>Q: Why doesn't <code>fetch-my-weather</code> raise exceptions like other libraries?</strong><br />
 A: It's designed to be beginner-friendly. Checking if a string starts with "Error:" is simpler than try/except blocks for beginners.</p>
+<p><strong>Q: When should I use the metadata feature instead of basic error checking?</strong><br />
+A: Use metadata when you need more information about the response source (real API, cache, or mock) or when you want to gracefully handle errors by always having usable data. It's particularly useful when multiple users might hit rate limits together.</p>
 <p><strong>Q: How can I extract specific data (like temperature) from the text output?</strong><br />
 A: You can use string operations like <code>split()</code> and regular expressions. This is intentionally part of the learning process!</p>
 <p><strong>Q: Is there a limit to how many requests I can make?</strong><br />
-A: The underlying weather service may have rate limits. That's why <code>fetch-my-weather</code> includes caching to minimize requests. This is a good opportunity to discuss API etiquette.</p>
+A: The underlying weather service may have rate limits. That's why <code>fetch-my-weather</code> includes caching to minimize requests and provides fallback mock data. This is a good opportunity to discuss API etiquette.</p>
 <p><strong>Q: Why use this instead of a more advanced weather API?</strong><br />
 A: <code>fetch-my-weather</code> is specifically designed for learning. It requires no API keys, has minimal setup, and provides a gentle introduction to API concepts.</p>
 <h2 id="additional-resources">Additional Resources<a class="headerlink" href="#additional-resources" title="Permanent link">&para;</a></h2>

@@ -484,6 +484,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#response-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Metadata
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#advanced-usage" class="md-nav__link">
     <span class="md-ellipsis">
       Advanced Usage
@@ -1372,6 +1381,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#response-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Metadata
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#advanced-usage" class="md-nav__link">
     <span class="md-ellipsis">
       Advanced Usage
@@ -1535,6 +1553,7 @@
 <li><a href="#caching">Caching</a></li>
 <li><a href="#mock-mode">Mock Mode</a></li>
 <li><a href="#error-handling">Error Handling</a></li>
+<li><a href="#response-metadata">Response Metadata</a></li>
 <li><a href="#advanced-usage">Advanced Usage</a></li>
 <li><a href="#common-issues">Common Issues</a></li>
 <li><a href="#educational-notes">Educational Notes</a></li>
@@ -1795,25 +1814,63 @@
 </span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="k">else</span><span class="p">:</span>
 </span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weather data received (non-JSON format)&quot;</span><span class="p">)</span>
 </span></code></pre></div>
+<h2 id="response-metadata">Response Metadata<a class="headerlink" href="#response-metadata" title="Permanent link">&para;</a></h2>
+<p>For more advanced error handling and to get information about the source of your weather data, you can use the <code>with_metadata=True</code> parameter. This returns a <code>ResponseWrapper</code> object that contains both the weather data and metadata about the response:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fetch_my_weather</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseWrapper</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Get weather with metadata</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="n">response</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    <span class="n">with_metadata</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="p">)</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">ResponseWrapper</span><span class="p">):</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    <span class="c1"># Access metadata</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>    <span class="n">metadata</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">metadata</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data source:&quot;</span><span class="p">)</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Real API data: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">is_real_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Cached data: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">is_cached</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Mock data: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">is_mock</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>    <span class="c1"># Check for errors</span>
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>    <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">error_type</span><span class="p">:</span>
+</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occurred: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-14-21"><a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error message: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-14-22"><a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a>
+</span><span id="__span-14-23"><a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a>    <span class="c1"># Access the actual data</span>
+</span><span id="__span-14-24"><a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+</span><span id="__span-14-25"><a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a>    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;current_condition&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">current_condition</span><span class="p">:</span>
+</span><span id="__span-14-26"><a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a>        <span class="n">current</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-14-27"><a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">temp_C</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The metadata feature is especially useful for:</p>
+<ul>
+<li>Understanding where your data is coming from (API, cache, or mock)</li>
+<li>Diagnosing issues with API calls without losing access to weather data</li>
+<li>Learning applications where students need to understand data sources</li>
+<li>Building more resilient applications that can handle API outages</li>
+</ul>
+<p>When <code>with_metadata=True</code> is used, the package will always return usable weather data by falling back to mock data in case of errors, while still providing detailed information about what went wrong.</p>
 <h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
 <h3 id="setting-a-custom-user-agent">Setting a Custom User Agent<a class="headerlink" href="#setting-a-custom-user-agent" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Set a custom user agent (helpful if you&#39;re building an app)</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_user_agent</span><span class="p">(</span><span class="s2">&quot;MyWeatherApp/1.0&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Set a custom user agent (helpful if you&#39;re building an app)</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_user_agent</span><span class="p">(</span><span class="s2">&quot;MyWeatherApp/1.0&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="combining-multiple-options">Combining Multiple Options<a class="headerlink" href="#combining-multiple-options" title="Permanent link">&para;</a></h3>
 <p>You can combine different parameters to customize your request:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Get one-day forecast for Paris in French with US units in narrow format</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">paris_custom</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">view_options</span><span class="o">=</span><span class="s2">&quot;1n&quot;</span><span class="p">,</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;fr&quot;</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Get one-day forecast for Paris in French with US units in narrow format</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">paris_custom</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">view_options</span><span class="o">=</span><span class="s2">&quot;1n&quot;</span><span class="p">,</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;fr&quot;</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h2>
 <h3 id="network-problems">Network Problems<a class="headerlink" href="#network-problems" title="Permanent link">&para;</a></h3>
 <p>If you have connectivity issues, <code>fetch_my_weather</code> will return an error message string:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Error: Could not connect to http://wttr.in/London. Check network connection.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Error: Could not connect to http://wttr.in/London. Check network connection.
 </span></code></pre></div>
 <p>In your code, always check if the result starts with "Error:" before trying to use it.</p>
 <h3 id="location-not-found">Location Not Found<a class="headerlink" href="#location-not-found" title="Permanent link">&para;</a></h3>

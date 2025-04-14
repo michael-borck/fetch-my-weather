@@ -956,6 +956,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#why-response-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Response Metadata?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#why-in-memory-caching" class="md-nav__link">
     <span class="md-ellipsis">
       Why In-Memory Caching?
@@ -1247,6 +1256,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#why-response-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Response Metadata?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#why-in-memory-caching" class="md-nav__link">
     <span class="md-ellipsis">
       Why In-Memory Caching?
@@ -1446,12 +1464,20 @@
 - No need to learn complex object models
 - Matches the console-oriented nature of the weather service</p>
 <h3 id="why-no-exceptions">Why No Exceptions?<a class="headerlink" href="#why-no-exceptions" title="Permanent link">&para;</a></h3>
-<p>The package never raises exceptions to the caller, instead returning error messages as strings.</p>
+<p>The package never raises exceptions to the caller, instead returning error messages as strings or metadata with fallback data.</p>
 <p><strong>Rationale:</strong>
 - Exception handling is often confusing for beginners
 - Pattern-based error checking (<code>if result.startswith("Error:")</code>) is easy to understand
 - Consistent with the string-based return values
 - Simpler control flow in user code</p>
+<h3 id="why-response-metadata">Why Response Metadata?<a class="headerlink" href="#why-response-metadata" title="Permanent link">&para;</a></h3>
+<p>The package offers an optional metadata approach through the <code>with_metadata=True</code> parameter, which returns both data and metadata about the response.</p>
+<p><strong>Rationale:</strong>
+- Provides more context about the data source (real API, cache, or mock)
+- Always returns usable data (falling back to mock data) rather than error strings
+- Enables graceful degradation during high traffic or API rate limiting
+- Offers more advanced error handling while maintaining the beginner-friendly approach
+- Opt-in design maintains backward compatibility</p>
 <h3 id="why-in-memory-caching">Why In-Memory Caching?<a class="headerlink" href="#why-in-memory-caching" title="Permanent link">&para;</a></h3>
 <p>The package uses a simple dictionary-based in-memory cache rather than a more sophisticated caching system.</p>
 <p><strong>Rationale:</strong>
