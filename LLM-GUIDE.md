@@ -280,6 +280,7 @@ The package uses Pydantic models to provide structured, type-safe access to JSON
 - `DailyForecast`: Daily weather forecast
 - `HourlyForecast`: Hourly weather forecast
 - `NearestArea`: Location information
+- `Request`: Information about the API request (query string and location type)
 - `Astronomy`: Sun and moon information
 
 ## Common Use Cases

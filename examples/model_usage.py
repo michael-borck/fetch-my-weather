@@ -117,6 +117,15 @@ def main() -> None:
             print()  # Add blank line between days
     else:
         print("No forecast data available")
+        
+    # Example 5: Access request information
+    print("\nExample 5: Access request information")
+    if weather_response.request:
+        request_info = weather_response.request[0]
+        print(f"Query: {request_info.query}")
+        print(f"Query type: {request_info.type}")
+    else:
+        print("No request information available")
 
     # Disable mock mode
     fetch_my_weather.set_mock_mode(False)
