@@ -6,8 +6,6 @@ This script demonstrates how to use the Pydantic models for accessing weather da
 in a type-safe, structured way.
 """
 
-import json
-
 import fetch_my_weather
 from fetch_my_weather import (
     WeatherResponse,
@@ -117,7 +115,7 @@ def main() -> None:
             print()  # Add blank line between days
     else:
         print("No forecast data available")
-        
+
     # Example 5: Access request information
     print("\nExample 5: Access request information")
     if weather_response.request:
