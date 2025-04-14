@@ -31,10 +31,10 @@ _MOCK_DATA = {
     "text": """Weather report: London
 
      \033[38;5;226m   \\  /\033[0m       Partly cloudy
-     \033[38;5;226m _ /\"\"\033[38;5;250m.-.    \033[0m  \033[38;5;214m17\033[0m °C          
-     \033[38;5;226m   \\_\033[38;5;250m(   ).   \033[0m  ↗ \033[38;5;220m11\033[0m km/h      
-     \033[38;5;226m   /\033[38;5;250m(___(__) \033[0m  10 km          
-                  0.0 mm         
+     \033[38;5;226m _ /\"\"\033[38;5;250m.-.    \033[0m  \033[38;5;214m17\033[0m °C
+     \033[38;5;226m   \\_\033[38;5;250m(   ).   \033[0m  ↗ \033[38;5;220m11\033[0m km/h
+     \033[38;5;226m   /\033[38;5;250m(___(__) \033[0m  10 km
+                  0.0 mm
 """,
     "json": {
         "current_condition": [
@@ -211,7 +211,7 @@ def _create_metadata(
 ) -> ResponseMetadata:
     """
     Creates a ResponseMetadata object with the given parameters.
-    
+
     Args:
         is_real_data: Whether this is real data from the API.
         is_cached: Whether this is cached data.
@@ -220,7 +220,7 @@ def _create_metadata(
         error_type: Type of error if any.
         error_message: Detailed error message if any.
         url: URL that was requested.
-        
+
     Returns:
         A ResponseMetadata object.
     """
@@ -241,18 +241,18 @@ def _wrap_response(
 ) -> str | bytes | dict[str, Any] | WeatherResponse | ResponseWrapper:
     """
     Wraps the response data with metadata if requested.
-    
+
     Args:
         data: The response data.
         metadata: The metadata to include.
         with_metadata: Whether to include metadata.
-        
+
     Returns:
         Either the data directly or a ResponseWrapper with data and metadata.
     """
     if with_metadata:
         return ResponseWrapper(data=data, metadata=metadata)
-    
+
     # For Pydantic models, attach metadata directly to the model
     if isinstance(data, WeatherResponse):
         data.metadata = metadata
@@ -278,7 +278,7 @@ def _create_mock_data(
 ) -> str | bytes | dict[str, Any] | WeatherResponse | ResponseWrapper:
     """
     Creates appropriate mock data with metadata for any error situation.
-    
+
     Args:
         format: The requested format.
         error_type: Type of error that occurred.
@@ -286,7 +286,7 @@ def _create_mock_data(
         with_metadata: Whether to include metadata.
         url: URL that was requested.
         status_code: HTTP status code if available.
-        
+
     Returns:
         Appropriate mock data with metadata.
     """
@@ -300,7 +300,7 @@ def _create_mock_data(
         error_message=error_message,
         url=url,
     )
-    
+
     # Create appropriate mock data based on format
     if format == "png":
         mock_data = _MOCK_DATA["png"]
@@ -314,7 +314,9 @@ def _create_mock_data(
             return _wrap_response(mock_data, metadata, with_metadata)
         else:
             # This should never happen with our mock data, but just in case
-            return _wrap_response("Error: Invalid mock data format", metadata, with_metadata)
+            return _wrap_response(
+                "Error: Invalid mock data format", metadata, with_metadata
+            )
     elif format == "json":
         # Convert to Pydantic model
         try:
@@ -523,7 +525,7 @@ def get_weather(
                 When "raw_json" is used, returns the raw JSON as a Python dictionary.
         use_mock: If True, use mock data instead of making a real API request.
                  If None, use the global setting (_USE_MOCK_DATA).
-        with_metadata: If True, include metadata about the response (real vs mock, 
+        with_metadata: If True, include metadata about the response (real vs mock,
                       cache status, errors). Returns a ResponseWrapper instead of direct data.
 
     Returns:
@@ -575,7 +577,7 @@ def get_weather(
             is_mock=True,
             url=url,
         )
-        
+
         if format == "png" or is_png:
             # Cast to bytes using a type assertion for the type checker
             mock_png: bytes = _MOCK_DATA["png"]  # type: ignore
@@ -628,7 +630,9 @@ def get_weather(
                     # For raw_json, just return the parsed dictionary
                     if format == "raw_json":
                         parsed_dict: dict[str, Any] = json_data
-                        return _wrap_response(parsed_dict, cache_metadata, with_metadata)
+                        return _wrap_response(
+                            parsed_dict, cache_metadata, with_metadata
+                        )
                     # For json, convert to Pydantic model
                     parsed_model: WeatherResponse = WeatherResponse.parse_obj(json_data)
                     return _wrap_response(parsed_model, cache_metadata, with_metadata)
@@ -642,7 +646,7 @@ def get_weather(
                         error_message=str(e),
                         url=url,
                     )
-                    
+
                     if with_metadata:
                         # Return mock data with error metadata
                         return _create_mock_data(
@@ -652,7 +656,7 @@ def get_weather(
                             with_metadata=with_metadata,
                             url=url,
                         )
-                        
+
                     # If not with_metadata, fall back to original behavior
                     if isinstance(cached_data, str):
                         error_text: str = cached_data
@@ -681,10 +685,8 @@ def get_weather(
                     )
                     return _wrap_response(cached_model, cache_metadata, with_metadata)
                 except ValidationError as e:
-                    struct_error: str = (
-                        f"Error: Cached data doesn't match the expected model structure: {str(e)}"
-                    )
-                    
+                    struct_error: str = f"Error: Cached data doesn't match the expected model structure: {str(e)}"
+
                     if with_metadata:
                         # Return mock data with error metadata
                         return _create_mock_data(
@@ -694,7 +696,7 @@ def get_weather(
                             with_metadata=with_metadata,
                             url=url,
                         )
-                    
+
                     return struct_error
         # Handle other formats or types
         if isinstance(cached_data, str):
@@ -746,17 +748,21 @@ def get_weather(
                     # For raw_json, return the dictionary without Pydantic conversion
                     if format == "raw_json":
                         json_dict_data: dict[str, Any] = json_data
-                        return _wrap_response(json_dict_data, real_metadata, with_metadata)
+                        return _wrap_response(
+                            json_dict_data, real_metadata, with_metadata
+                        )
 
                     # For standard json, convert to Pydantic model
                     try:
                         weather_response: WeatherResponse = WeatherResponse.parse_obj(
                             json_data
                         )
-                        return _wrap_response(weather_response, real_metadata, with_metadata)
+                        return _wrap_response(
+                            weather_response, real_metadata, with_metadata
+                        )
                     except ValidationError as e:
                         validation_error: str = f"Error: JSON data doesn't match the expected model structure: {str(e)}"
-                        
+
                         if with_metadata:
                             # Return mock data with error details
                             return _create_mock_data(
@@ -767,21 +773,31 @@ def get_weather(
                                 url=url,
                                 status_code=response.status_code,
                             )
-                            
+
                         return validation_error
 
                 except json.JSONDecodeError:
-                    # Create error metadata
-                    error_metadata = _create_metadata(
-                        is_real_data=False,
-                        is_cached=False,
-                        is_mock=True,
-                        status_code=response.status_code,
-                        error_type="JSONDecodeError",
-                        error_message=f"Unable to parse JSON response from {url}",
-                        url=url,
-                    )
-                    
+                    # Create metadata and return if needed
+                    if with_metadata:
+                        metadata = _create_metadata(
+                            is_real_data=False,
+                            is_cached=False,
+                            is_mock=True,
+                            status_code=response.status_code,
+                            error_type="JSONDecodeError",
+                            error_message=f"Unable to parse JSON response from {url}",
+                            url=url,
+                        )
+                        mock_data = _create_mock_data(
+                            format=format,
+                            error_type="JSONDecodeError",
+                            error_message=f"Unable to parse JSON response from {url}",
+                            with_metadata=with_metadata,
+                            url=url,
+                            status_code=response.status_code
+                        )
+                        return _wrap_response(mock_data, metadata, with_metadata)
+
                     # JSON decode failed - for educational use, provide mock data instead of error
                     return _create_mock_data(
                         format=format,
@@ -811,30 +827,42 @@ def get_weather(
             except Exception:
                 pass  # Ignore errors trying to get error details
 
-            # Create error metadata
-            error_metadata = _create_metadata(
-                is_real_data=False,
-                is_cached=False,
-                is_mock=with_metadata,  # Will be mocked only if with_metadata
-                status_code=response.status_code,
-                error_type="HTTPError",
-                error_message=error_message,
-                url=url,
-            )
-            
-            # For any error status code, provide fallback data if with_metadata is true
+            # Create error metadata and return if requested
             if with_metadata:
-                return _create_mock_data(
+                metadata = _create_metadata(
+                    is_real_data=False,
+                    is_cached=False,
+                    is_mock=True,  # Will be mocked
+                    status_code=response.status_code,
+                    error_type="HTTPError",
+                    error_message=error_message,
+                    url=url,
+                )
+                mock_data = _create_mock_data(
                     format=format,
-                    error_type="HTTPError", 
+                    error_type="HTTPError",
                     error_message=error_message,
                     with_metadata=with_metadata,
                     url=url,
                     status_code=response.status_code,
                 )
-            
+                return _wrap_response(mock_data, metadata, with_metadata)
+
+            # For any error status code, provide fallback data if with_metadata is true
+            if with_metadata:
+                return _create_mock_data(
+                    format=format,
+                    error_type="HTTPError",
+                    error_message=error_message,
+                    with_metadata=with_metadata,
+                    url=url,
+                    status_code=response.status_code,
+                )
+
             # Without metadata, still provide mock data for 503 errors with JSON formats
-            if response.status_code == 503 and (format == "json" or format == "raw_json"):
+            if response.status_code == 503 and (
+                format == "json" or format == "raw_json"
+            ):
                 # Provide a mock response with a note about rate limiting
                 if format == "raw_json":
                     # Make a deep copy and add a note about it being mock data
@@ -850,8 +878,8 @@ def get_weather(
                     # Convert mock data to Pydantic model
                     try:
                         mock_data = json.loads(json.dumps(_MOCK_DATA["json"]))
-                        mock_weather_response: WeatherResponse = WeatherResponse.parse_obj(
-                            mock_data
+                        mock_weather_response: WeatherResponse = (
+                            WeatherResponse.parse_obj(mock_data)
                         )
                         return mock_weather_response
                     except ValidationError:
@@ -866,7 +894,9 @@ def get_weather(
         if error_type == "Timeout":
             error_message = f"Error: Request timed out while connecting to {url}"
         elif error_type == "ConnectionError":
-            error_message = f"Error: Could not connect to {url}. Check network connection."
+            error_message = (
+                f"Error: Could not connect to {url}. Check network connection."
+            )
         elif "requests" in str(e.__class__.__module__):
             # Catch any other requests-related error
             error_message = f"Error: An unexpected network error occurred: {e}"
@@ -874,7 +904,7 @@ def get_weather(
             # Catch any other unexpected error during processing
             # This shouldn't normally happen with the above catches, but belt-and-suspenders
             error_message = f"Error: An unexpected error occurred: {e}"
-            
+
         # If with_metadata is enabled, return mock data with error information
         if with_metadata:
             return _create_mock_data(
@@ -884,6 +914,6 @@ def get_weather(
                 with_metadata=with_metadata,
                 url=url,
             )
-            
+
         # Otherwise return the error message
         return error_message
