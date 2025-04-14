@@ -415,6 +415,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#data-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Formats
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -439,9 +448,27 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#working-with-json-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Working with JSON &amp; Models
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#caching" class="md-nav__link">
     <span class="md-ellipsis">
       Caching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mock-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mock Mode
     </span>
   </a>
   
@@ -1276,6 +1303,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#data-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Formats
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1300,9 +1336,27 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#working-with-json-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Working with JSON &amp; Models
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#caching" class="md-nav__link">
     <span class="md-ellipsis">
       Caching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mock-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mock Mode
     </span>
   </a>
   
@@ -1474,9 +1528,12 @@
 <li><a href="#different-weather-views">Different Weather Views</a></li>
 <li><a href="#changing-units">Changing Units</a></li>
 <li><a href="#language-support">Language Support</a></li>
+<li><a href="#data-formats">Data Formats</a></li>
 <li><a href="#moon-phases">Moon Phases</a></li>
 <li><a href="#weather-images">Weather Images</a></li>
+<li><a href="#working-with-json--models">Working with JSON &amp; Models</a></li>
 <li><a href="#caching">Caching</a></li>
+<li><a href="#mock-mode">Mock Mode</a></li>
 <li><a href="#error-handling">Error Handling</a></li>
 <li><a href="#advanced-usage">Advanced Usage</a></li>
 <li><a href="#common-issues">Common Issues</a></li>
@@ -1490,22 +1547,27 @@
 <p>Here's a basic example to get you started:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Get current location weather (based on your IP address)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Get current location weather as a structured model (default)</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">()</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="p">)</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Get weather for a specific city</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">paris_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">)</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">paris_weather</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">temp_C</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition: </span><span class="si">{</span><span class="n">weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weatherDesc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Get weather for a specific city as plain text</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">paris_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">paris_weather</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="core-features">Core Features<a class="headerlink" href="#core-features" title="Permanent link">&para;</a></h2>
 <h3 id="getting-current-weather">Getting Current Weather<a class="headerlink" href="#getting-current-weather" title="Permanent link">&para;</a></h3>
 <p>When called without a location, <code>fetch_my_weather</code> detects your location based on your IP address:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Get weather for current location</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Get weather for current location (returns a Pydantic model by default)</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">current_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">()</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">current_weather</span><span class="p">)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Access structured data</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">temperature</span> <span class="o">=</span> <span class="n">current_weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">temp_C</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">condition</span> <span class="o">=</span> <span class="n">current_weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weatherDesc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;It&#39;s </span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="weather-for-a-specific-location">Weather for a Specific Location<a class="headerlink" href="#weather-for-a-specific-location" title="Permanent link">&para;</a></h3>
 <p>You can request weather for many types of locations:</p>
@@ -1576,93 +1638,182 @@
 </span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="c1"># Chinese (Simplified)</span>
 </span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="n">chinese</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Beijing&quot;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;zh-cn&quot;</span><span class="p">)</span>
 </span></code></pre></div>
+<h3 id="data-formats">Data Formats<a class="headerlink" href="#data-formats" title="Permanent link">&para;</a></h3>
+<p>The package supports multiple data formats to suit different needs:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># JSON format (default) - returns a Pydantic model for structured data access</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">json_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Access data with type safety and autocompletion</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">temp</span> <span class="o">=</span> <span class="n">json_weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">temp_C</span> 
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># Raw JSON format - returns a Python dictionary</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">raw_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;raw_json&quot;</span><span class="p">)</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="c1"># Access data using dictionary syntax</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">temp</span> <span class="o">=</span> <span class="n">raw_weather</span><span class="p">[</span><span class="s2">&quot;current_condition&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;temp_C&quot;</span><span class="p">]</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">condition</span> <span class="o">=</span> <span class="n">raw_weather</span><span class="p">[</span><span class="s2">&quot;current_condition&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;weatherDesc&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="c1"># Text format - returns plain text with ASCII art (for direct display)</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="n">text_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">text_weather</span><span class="p">)</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="c1"># PNG format - returns image bytes</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="n">png_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Tokyo&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;weather.png&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">png_weather</span><span class="p">)</span>
+</span></code></pre></div>
 <h2 id="moon-phases">Moon Phases<a class="headerlink" href="#moon-phases" title="Permanent link">&para;</a></h2>
 <p>You can also get information about moon phases:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Current moon phase</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Moon phase for a specific date</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">future_moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">moon_date</span><span class="o">=</span><span class="s2">&quot;2025-12-25&quot;</span><span class="p">)</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Moon phase with location hint (useful for timing)</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">us_moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">moon_location_hint</span><span class="o">=</span><span class="s2">&quot;,+US&quot;</span><span class="p">)</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">paris_moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">moon_location_hint</span><span class="o">=</span><span class="s2">&quot;,+Paris&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Current moon phase</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Moon phase for a specific date</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">future_moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">moon_date</span><span class="o">=</span><span class="s2">&quot;2025-12-25&quot;</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Moon phase with location hint (useful for timing)</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">us_moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">moon_location_hint</span><span class="o">=</span><span class="s2">&quot;,+US&quot;</span><span class="p">)</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">paris_moon</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">is_moon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">moon_location_hint</span><span class="o">=</span><span class="s2">&quot;,+Paris&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="weather-images">Weather Images<a class="headerlink" href="#weather-images" title="Permanent link">&para;</a></h2>
 <p>Weather data can also be returned as PNG images:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Get weather as PNG image (returns bytes)</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">london_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> <span class="n">is_png</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Save the PNG to a file</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;london_weather.png&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">london_png</span><span class="p">)</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Get transparent PNG </span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">transparent_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> 
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="n">is_png</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="n">png_options</span><span class="o">=</span><span class="s2">&quot;t&quot;</span>
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">)</span>
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
-</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="c1"># Get PNG with padding</span>
-</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="n">padded_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
-</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> 
-</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="n">is_png</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>    <span class="n">png_options</span><span class="o">=</span><span class="s2">&quot;p&quot;</span>
-</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="p">)</span>
-</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>
-</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="c1"># Combine PNG options</span>
-</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="n">transparent_padded</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
-</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> 
-</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>    <span class="n">is_png</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>    <span class="n">png_options</span><span class="o">=</span><span class="s2">&quot;tp&quot;</span>
-</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Get weather as PNG image using format parameter (returns bytes)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">london_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Save the PNG to a file</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;london_weather.png&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">london_png</span><span class="p">)</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1"># Get transparent PNG </span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">transparent_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> 
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> 
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    <span class="n">png_options</span><span class="o">=</span><span class="s2">&quot;t&quot;</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">)</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="c1"># Get PNG with padding</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="n">padded_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> 
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> 
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    <span class="n">png_options</span><span class="o">=</span><span class="s2">&quot;p&quot;</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="p">)</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="c1"># Combine PNG options</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="n">transparent_padded</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> 
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> 
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>    <span class="n">png_options</span><span class="o">=</span><span class="s2">&quot;tp&quot;</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a><span class="p">)</span>
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="c1"># Legacy method (deprecated but still supported)</span>
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="n">legacy_png</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> <span class="n">is_png</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="working-with-json-models">Working with JSON &amp; Models<a class="headerlink" href="#working-with-json-models" title="Permanent link">&para;</a></h2>
+<p>When using the default JSON format, the package returns data as Pydantic models that provide type safety and structure:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fetch_my_weather</span><span class="w"> </span><span class="kn">import</span> <span class="n">WeatherResponse</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># Get weather data as a model (this is the default)</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">)</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Using type hints for better IDE support</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">weather_typed</span><span class="p">:</span> <span class="n">WeatherResponse</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">)</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># Access current conditions</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="n">current</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">temp_C</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feels like: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">FeelsLikeC</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">weatherDesc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Humidity: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">humidity</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wind: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">windspeedKmph</span><span class="si">}</span><span class="s2"> km/h, </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">winddir16Point</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="c1"># Access location information</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="n">location</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">nearest_area</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Location: </span><span class="si">{</span><span class="n">location</span><span class="o">.</span><span class="n">areaName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">location</span><span class="o">.</span><span class="n">country</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Region: </span><span class="si">{</span><span class="n">location</span><span class="o">.</span><span class="n">region</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coordinates: </span><span class="si">{</span><span class="n">location</span><span class="o">.</span><span class="n">latitude</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">location</span><span class="o">.</span><span class="n">longitude</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="c1"># Access forecast data</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">weather</span><span class="o">.</span><span class="n">weather</span><span class="p">:</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Date: </span><span class="si">{</span><span class="n">day</span><span class="o">.</span><span class="n">date</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max/Min: </span><span class="si">{</span><span class="n">day</span><span class="o">.</span><span class="n">maxtempC</span><span class="si">}</span><span class="s2">°C/</span><span class="si">{</span><span class="n">day</span><span class="o">.</span><span class="n">mintempC</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>
+</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>    <span class="c1"># Access astronomy data</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>    <span class="n">astronomy</span> <span class="o">=</span> <span class="n">day</span><span class="o">.</span><span class="n">astronomy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sunrise: </span><span class="si">{</span><span class="n">astronomy</span><span class="o">.</span><span class="n">sunrise</span><span class="si">}</span><span class="s2">, Sunset: </span><span class="si">{</span><span class="n">astronomy</span><span class="o">.</span><span class="n">sunset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>
+</span><span id="__span-10-32"><a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>    <span class="c1"># Access hourly forecast (just first entry as example)</span>
+</span><span id="__span-10-33"><a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>    <span class="n">hour</span> <span class="o">=</span> <span class="n">day</span><span class="o">.</span><span class="n">hourly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-10-34"><a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="n">hour</span><span class="o">.</span><span class="n">time</span><span class="si">}</span><span class="s2">, Temp: </span><span class="si">{</span><span class="n">hour</span><span class="o">.</span><span class="n">tempC</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="caching">Caching<a class="headerlink" href="#caching" title="Permanent link">&para;</a></h2>
 <p>To reduce unnecessary network requests, <code>fetch_my_weather</code> caches responses for 10 minutes by default. You can control this behavior:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Set cache duration to 30 minutes (1800 seconds)</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_cache_duration</span><span class="p">(</span><span class="mi">1800</span><span class="p">)</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Disable caching completely</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_cache_duration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="c1"># Clear the current cache</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># Set cache duration to 30 minutes (1800 seconds)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_cache_duration</span><span class="p">(</span><span class="mi">1800</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1"># Disable caching completely</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_cache_duration</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="c1"># Clear the current cache</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
 </span></code></pre></div>
+<h2 id="mock-mode">Mock Mode<a class="headerlink" href="#mock-mode" title="Permanent link">&para;</a></h2>
+<p>For development and testing without hitting API rate limits, the package includes a mock mode:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># Enable mock mode globally</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_mock_mode</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1"># Now all requests will use mock data instead of real API calls</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">mock_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">)</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">mock_weather</span><span class="o">.</span><span class="n">current_condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">temp_C</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="c1"># Use mock mode for a single request</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="n">real_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span> <span class="n">use_mock</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="n">mock_weather</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;Berlin&quot;</span><span class="p">,</span> <span class="n">use_mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="c1"># Disable mock mode</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_mock_mode</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Mock mode provides realistic sample data that matches the structure of real API responses, making it ideal for:</p>
+<ul>
+<li>Development without internet connection</li>
+<li>Avoiding rate limits during testing</li>
+<li>Creating reproducible examples</li>
+<li>Writing unit tests</li>
+</ul>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>One of the key features of <code>fetch_my_weather</code> is its beginner-friendly error handling. Instead of raising exceptions, it returns error messages as strings:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># Try to get weather for a location that might not exist</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">result</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;NonExistentPlace12345&quot;</span><span class="p">)</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Check if we got an error message</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Error:&quot;</span><span class="p">):</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Oops! Something went wrong: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="k">else</span><span class="p">:</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weather data:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">fetch_my_weather</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="c1"># Try to get weather for a location that might not exist</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">result</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;NonExistentPlace12345&quot;</span><span class="p">)</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># Check if we got an error message</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Error:&quot;</span><span class="p">):</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Oops! Something went wrong: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">WeatherResponse</span><span class="p">):</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Weather data received for </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">nearest_area</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">areaName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weather data received (non-JSON format)&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
 <h3 id="setting-a-custom-user-agent">Setting a Custom User Agent<a class="headerlink" href="#setting-a-custom-user-agent" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Set a custom user agent (helpful if you&#39;re building an app)</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_user_agent</span><span class="p">(</span><span class="s2">&quot;MyWeatherApp/1.0&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Set a custom user agent (helpful if you&#39;re building an app)</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">set_user_agent</span><span class="p">(</span><span class="s2">&quot;MyWeatherApp/1.0&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="combining-multiple-options">Combining Multiple Options<a class="headerlink" href="#combining-multiple-options" title="Permanent link">&para;</a></h3>
 <p>You can combine different parameters to customize your request:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Get one-day forecast for Paris in French with US units in narrow format</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">paris_custom</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">view_options</span><span class="o">=</span><span class="s2">&quot;1n&quot;</span><span class="p">,</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;fr&quot;</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Get one-day forecast for Paris in French with US units in narrow format</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">paris_custom</span> <span class="o">=</span> <span class="n">fetch_my_weather</span><span class="o">.</span><span class="n">get_weather</span><span class="p">(</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span><span class="p">,</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;u&quot;</span><span class="p">,</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">view_options</span><span class="o">=</span><span class="s2">&quot;1n&quot;</span><span class="p">,</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;fr&quot;</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h2>
 <h3 id="network-problems">Network Problems<a class="headerlink" href="#network-problems" title="Permanent link">&para;</a></h3>
 <p>If you have connectivity issues, <code>fetch_my_weather</code> will return an error message string:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Error: Could not connect to http://wttr.in/London. Check network connection.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Error: Could not connect to http://wttr.in/London. Check network connection.
 </span></code></pre></div>
 <p>In your code, always check if the result starts with "Error:" before trying to use it.</p>
 <h3 id="location-not-found">Location Not Found<a class="headerlink" href="#location-not-found" title="Permanent link">&para;</a></h3>

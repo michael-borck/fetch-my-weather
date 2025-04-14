@@ -907,27 +907,45 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-caching-system" class="md-nav__link">
+  <a href="#2-pydantic-models" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Caching System
+      2. Pydantic Models
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-http-request-handling" class="md-nav__link">
+  <a href="#3-caching-system" class="md-nav__link">
     <span class="md-ellipsis">
-      3. HTTP Request Handling
+      3. Caching System
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-error-handling" class="md-nav__link">
+  <a href="#4-mock-data-system" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Error Handling
+      4. Mock Data System
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-http-request-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. HTTP Request Handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Error Handling
     </span>
   </a>
   
@@ -967,9 +985,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#content-type-detection" class="md-nav__link">
+  <a href="#format-selection-and-response-processing" class="md-nav__link">
     <span class="md-ellipsis">
-      Content Type Detection
+      Format Selection and Response Processing
     </span>
   </a>
   
@@ -1202,27 +1220,45 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-caching-system" class="md-nav__link">
+  <a href="#2-pydantic-models" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Caching System
+      2. Pydantic Models
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-http-request-handling" class="md-nav__link">
+  <a href="#3-caching-system" class="md-nav__link">
     <span class="md-ellipsis">
-      3. HTTP Request Handling
+      3. Caching System
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-error-handling" class="md-nav__link">
+  <a href="#4-mock-data-system" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Error Handling
+      4. Mock Data System
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-http-request-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. HTTP Request Handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Error Handling
     </span>
   </a>
   
@@ -1262,9 +1298,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#content-type-detection" class="md-nav__link">
+  <a href="#format-selection-and-response-processing" class="md-nav__link">
     <span class="md-ellipsis">
-      Content Type Detection
+      Format Selection and Response Processing
     </span>
   </a>
   
@@ -1357,26 +1393,32 @@
 <h1 id="technical-documentation-for-fetch-my-weather">Technical Documentation for fetch-my-weather<a class="headerlink" href="#technical-documentation-for-fetch-my-weather" title="Permanent link">&para;</a></h1>
 <p>This document provides technical details about the implementation of the <code>fetch-my-weather</code> package. It's intended for developers who want to understand the internal workings of the package or who might want to contribute to its development.</p>
 <h2 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">&para;</a></h2>
-<p><code>fetch-my-weather</code> is intentionally designed with a simple, flat architecture consisting of a small number of public functions and a few private helper functions.</p>
+<p><code>fetch-my-weather</code> is intentionally designed with a simple, structured architecture consisting of public functions, Pydantic models, and a few private helper functions.</p>
 <h3 id="file-structure">File Structure<a class="headerlink" href="#file-structure" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/fetch_my_weather/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── __init__.py      # Exports public API
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>└── core.py          # Core implementation
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── __init__.py      # Exports public API and models
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── core.py          # Core implementation
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>└── models.py        # Pydantic data models
 </span></code></pre></div>
 <h3 id="module-layout">Module Layout<a class="headerlink" href="#module-layout" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><strong>init</strong>.py</strong>: Exports the public API functions and package metadata</li>
+<li><strong><strong>init</strong>.py</strong>: Exports the public API functions, models, and package metadata</li>
 <li><strong>core.py</strong>: Contains all implementation code, including public API functions and private helper functions</li>
+<li><strong>models.py</strong>: Contains Pydantic models that represent the structure of weather data</li>
 </ul>
 <h2 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Permanent link">&para;</a></h2>
 <p>The basic flow of data through the package is:</p>
 <ol>
 <li>User calls <code>get_weather()</code> with parameters</li>
 <li>Parameters are validated</li>
+<li>If mock mode is enabled, mock data is returned</li>
 <li>URL is constructed using <code>_build_url()</code></li>
 <li>Cache is checked using <code>_get_from_cache()</code></li>
 <li>If data is not in cache, HTTP request is made</li>
 <li>Response is processed</li>
+<li>JSON responses are parsed and converted to Pydantic models</li>
+<li>Text responses are returned as strings</li>
+<li>PNG responses are returned as bytes</li>
 <li>Response is stored in cache using <code>_add_to_cache()</code></li>
 <li>Data is returned to the user</li>
 </ol>
@@ -1395,12 +1437,23 @@
 <ul>
 <li>Location specification</li>
 <li>Option formatting</li>
-<li>PNG vs text mode differences</li>
+<li>Output format (JSON, raw_json, text, PNG)</li>
 <li>Moon phase requests</li>
 <li>Language settings</li>
 </ul>
 <p>This function is critical because the weather service has different URL formats depending on the type of request.</p>
-<h3 id="2-caching-system">2. Caching System<a class="headerlink" href="#2-caching-system" title="Permanent link">&para;</a></h3>
+<h3 id="2-pydantic-models">2. Pydantic Models<a class="headerlink" href="#2-pydantic-models" title="Permanent link">&para;</a></h3>
+<p>The package uses Pydantic models to provide structured, type-safe access to JSON weather data:</p>
+<ul>
+<li><code>WeatherResponse</code>: Top-level model representing the complete API response</li>
+<li><code>CurrentCondition</code>: Weather conditions at the current time</li>
+<li><code>NearestArea</code>: Location information about the requested area</li>
+<li><code>DailyForecast</code>: Weather forecast for a specific day </li>
+<li><code>HourlyForecast</code>: Weather forecast for a specific hour</li>
+<li><code>Astronomy</code>: Sunrise, sunset, and moon phase data</li>
+</ul>
+<p>These models provide validation, type hints, and structured access to the data.</p>
+<h3 id="3-caching-system">3. Caching System<a class="headerlink" href="#3-caching-system" title="Permanent link">&para;</a></h3>
 <p>The caching system consists of:</p>
 <ul>
 <li>A module-level dictionary <code>_cache</code> that stores responses</li>
@@ -1410,15 +1463,25 @@
 <li>Public <code>clear_cache()</code> function to manually clear the cache</li>
 </ul>
 <p>The cache uses URLs as keys and stores tuples of <code>(timestamp, data)</code> as values. This allows for time-based expiration of cache entries.</p>
-<h3 id="3-http-request-handling">3. HTTP Request Handling<a class="headerlink" href="#3-http-request-handling" title="Permanent link">&para;</a></h3>
+<h3 id="4-mock-data-system">4. Mock Data System<a class="headerlink" href="#4-mock-data-system" title="Permanent link">&para;</a></h3>
+<p>The mock data system allows for development and testing without making real API calls:</p>
+<ul>
+<li>A module-level flag <code>_USE_MOCK_DATA</code> to enable/disable mock mode</li>
+<li>Mock data for all three formats (JSON, text, PNG)</li>
+<li>Public <code>set_mock_mode()</code> function to control mock mode</li>
+<li>Per-request control with the <code>use_mock</code> parameter</li>
+</ul>
+<p>Mock data follows the same structure as real API responses, ensuring that code will work the same with both.</p>
+<h3 id="5-http-request-handling">5. HTTP Request Handling<a class="headerlink" href="#5-http-request-handling" title="Permanent link">&para;</a></h3>
 <p>HTTP requests are made using the <code>requests</code> library. This section of the code:</p>
 <ul>
 <li>Sets appropriate headers (User-Agent)</li>
 <li>Makes the GET request with timeout</li>
-<li>Processes the response based on content type (text vs binary)</li>
+<li>Processes the response based on format (JSON, text, PNG)</li>
+<li>Converts JSON responses to Pydantic models</li>
 <li>Handles various error conditions</li>
 </ul>
-<h3 id="4-error-handling">4. Error Handling<a class="headerlink" href="#4-error-handling" title="Permanent link">&para;</a></h3>
+<h3 id="6-error-handling">6. Error Handling<a class="headerlink" href="#6-error-handling" title="Permanent link">&para;</a></h3>
 <p>The package uses a consistent approach to error handling:</p>
 <ul>
 <li>No exceptions are raised to the user</li>
@@ -1426,6 +1489,7 @@
 <li>Error messages are returned as strings that start with "Error:"</li>
 <li>HTTP errors include status codes</li>
 <li>Network errors include details about the failure</li>
+<li>JSON parsing errors include information about the validation failure</li>
 </ul>
 <h2 id="implementation-details">Implementation Details<a class="headerlink" href="#implementation-details" title="Permanent link">&para;</a></h2>
 <h3 id="in-memory-cache">In-memory Cache<a class="headerlink" href="#in-memory-cache" title="Permanent link">&para;</a></h3>
@@ -1450,13 +1514,23 @@
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="c1"># Process valid result</span>
 </span></code></pre></div>
 <p>This pattern was chosen to make error handling more accessible to beginners.</p>
-<h3 id="content-type-detection">Content Type Detection<a class="headerlink" href="#content-type-detection" title="Permanent link">&para;</a></h3>
-<p>The package uses the request parameter <code>is_png</code> to determine how to process the response:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span> <span class="n">is_png</span><span class="p">:</span>
+<h3 id="format-selection-and-response-processing">Format Selection and Response Processing<a class="headerlink" href="#format-selection-and-response-processing" title="Permanent link">&para;</a></h3>
+<p>The package uses the <code>format</code> parameter to determine how to process the response:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;png&quot;</span> <span class="ow">or</span> <span class="n">is_png</span><span class="p">:</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>  <span class="c1"># Return raw bytes for images</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">else</span><span class="p">:</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>     <span class="c1"># Return decoded text</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;raw_json&quot;</span><span class="p">:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">return</span> <span class="n">json_data</span>  <span class="c1"># Return raw Python dictionary</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">weather_response</span> <span class="o">=</span> <span class="n">WeatherResponse</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>  <span class="c1"># Convert to Pydantic model</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="k">return</span> <span class="n">weather_response</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>     <span class="c1"># Return decoded text</span>
 </span></code></pre></div>
+<p>The older <code>is_png</code> parameter is still supported for backward compatibility.</p>
 <h2 id="performance-considerations">Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permanent link">&para;</a></h2>
 <h3 id="network-efficiency">Network Efficiency<a class="headerlink" href="#network-efficiency" title="Permanent link">&para;</a></h3>
 <p>The built-in caching mechanism is designed to reduce network requests for identical queries, which:
@@ -1480,15 +1554,30 @@
 </ol>
 <p>Tests use mocking to avoid making actual network requests, ensuring tests are fast and reliable.</p>
 <h2 id="extensibility">Extensibility<a class="headerlink" href="#extensibility" title="Permanent link">&para;</a></h2>
-<p>The package was designed with teaching in mind rather than extensibility, but it could be extended in several ways:</p>
+<p>The package was designed with teaching in mind, but it also provides good extensibility:</p>
 <ol>
-<li>Adding support for additional weather services</li>
-<li>Implementing more sophisticated caching (e.g., persistent cache)</li>
-<li>Adding structured data parsing for weather information</li>
-<li>Supporting more output formats</li>
+<li><strong>Data Models</strong>: The Pydantic models can be extended or customized</li>
+<li><strong>Mock Data</strong>: Mock data can be modified for different testing scenarios</li>
+<li><strong>Additional Weather Services</strong>: Support could be added for other weather APIs</li>
+<li><strong>Advanced Caching</strong>: The caching system could be enhanced with persistence</li>
+<li><strong>Additional Output Formats</strong>: New formats could be added beyond JSON, text, and PNG</li>
 </ol>
 <h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h2>
-<p>The only external dependency is the <code>requests</code> library, which was chosen for its simplicity and widespread use. This minimizes installation issues and keeps the package lightweight.</p>
+<p>The package has two external dependencies:</p>
+<ol>
+<li><strong>requests</strong>: Used for making HTTP requests to the weather service</li>
+<li>Chosen for its simplicity and widespread use</li>
+<li>
+<p>Well-maintained and reliable</p>
+</li>
+<li>
+<p><strong>pydantic</strong>: Used for data validation and parsing</p>
+</li>
+<li>Provides type safety and validation</li>
+<li>Makes JSON data easier to work with</li>
+<li>Excellent integration with IDEs for autocompletion</li>
+</ol>
+<p>Both dependencies are widely used and well-maintained, minimizing potential issues.</p>
 
 
 
