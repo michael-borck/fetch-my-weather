@@ -4,6 +4,8 @@ Tests for the core functionality of the fetch-my-weather package.
 
 import time
 
+import json
+
 from pytest_mock import MockerFixture
 
 # Import the package
@@ -120,6 +122,23 @@ class TestUrlBuilder:
         """Test building a URL for PNG format with options."""
         url = _build_url(location="Cairo", is_png=True, png_options="t")
         assert url == "http://wttr.in/Cairo_t.png"
+        
+    def test_png_format_parameter(self) -> None:
+        """Test building a URL with format='png'."""
+        url = _build_url(location="Sydney", format="png")
+        assert url == "http://wttr.in/Sydney.png"
+        
+    def test_json_format_parameter(self) -> None:
+        """Test building a URL with format='json'."""
+        url = _build_url(location="London", format="json")
+        assert "http://wttr.in/London?format=j1" == url
+        
+    def test_json_format_with_options(self) -> None:
+        """Test building a URL with format='json' and other options."""
+        url = _build_url(location="Paris", format="json", units="m", view_options="0")
+        assert "format=j1" in url
+        assert "m0" in url
+        assert "Paris" in url
 
     def test_moon_url(self) -> None:
         """Test building a URL for moon phase."""
@@ -135,6 +154,12 @@ class TestUrlBuilder:
         """Test building a URL for moon phase with a location hint."""
         url = _build_url(is_moon=True, moon_location_hint=",+Paris")
         assert "moon,Paris" in url
+        
+    def test_moon_with_json_format(self) -> None:
+        """Test building a URL for moon phase with JSON format."""
+        url = _build_url(is_moon=True, format="json")
+        assert "moon" in url
+        assert "format=j1" in url
 
 
 class TestWeatherFetching:
@@ -146,30 +171,78 @@ class TestWeatherFetching:
         assert isinstance(result, str)
         assert "Error: Invalid 'units' parameter" in result
 
-    def test_get_weather_success(self, mocker: MockerFixture) -> None:
-        """Test get_weather with a successful response."""
+    def test_get_weather_success_text(self, mocker: MockerFixture) -> None:
+        """Test get_weather with a successful text response."""
         # Mock requests.get
         mock_response = mocker.Mock()
         mock_response.status_code = 200
         mock_response.text = "Weather data for location"
         mocker.patch("requests.get", return_value=mock_response)
 
-        # Get weather
-        result = get_weather(location="TestCity")
+        # Get weather with text format
+        result = get_weather(location="TestCity", format="text")
 
         # Verify result
         assert result == "Weather data for location"
+        
+    def test_get_weather_success_json(self, mocker: MockerFixture) -> None:
+        """Test get_weather with a successful JSON response."""
+        # Mock requests.get
+        sample_json = {"current_condition": [{"temp_C": "20", "weatherDesc": [{"value": "Sunny"}]}]}
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.text = json.dumps(sample_json)
+        mocker.patch("requests.get", return_value=mock_response)
 
-    def test_get_weather_png(self, mocker: MockerFixture) -> None:
-        """Test get_weather with PNG format."""
+        # Get weather with json format (default)
+        result = get_weather(location="TestCity")
+
+        # Verify result is a WeatherResponse model
+        from fetch_my_weather.models import WeatherResponse
+        assert isinstance(result, WeatherResponse)
+        # Check that the model contains our sample data
+        assert result.current_condition[0].temp_C == "20"
+        assert result.current_condition[0].weatherDesc[0].value == "Sunny"
+        
+    def test_get_weather_invalid_json(self, mocker: MockerFixture) -> None:
+        """Test get_weather with an invalid JSON response."""
+        # Mock requests.get
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.text = "This is not valid JSON"
+        mocker.patch("requests.get", return_value=mock_response)
+
+        # Get weather with json format
+        result = get_weather(location="TestCity", format="json")
+
+        # Verify error message
+        assert isinstance(result, str)
+        assert "Error: Unable to parse JSON" in result
+
+    def test_get_weather_png_deprecated(self, mocker: MockerFixture) -> None:
+        """Test get_weather with PNG format using deprecated is_png parameter."""
         # Mock requests.get
         mock_response = mocker.Mock()
         mock_response.status_code = 200
         mock_response.content = b"PNG image data"
         mocker.patch("requests.get", return_value=mock_response)
 
-        # Get weather as PNG
+        # Get weather as PNG using is_png
         result = get_weather(location="TestCity", is_png=True)
+
+        # Verify result
+        assert result == b"PNG image data"
+
+    def test_get_weather_png_format(self, mocker: MockerFixture) -> None:
+        """Test get_weather with PNG format using format parameter."""
+        # Mock requests.get
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.content = b"PNG image data"
+        mocker.patch("requests.get", return_value=mock_response)
+
+        # Get weather as PNG using format parameter
+        result = get_weather(location="TestCity", format="png")
 
         # Verify result
         assert result == b"PNG image data"
@@ -228,8 +301,8 @@ class TestWeatherFetching:
         assert isinstance(result, str)
         assert "Error: Could not connect" in result
 
-    def test_get_weather_caching(self, mocker: MockerFixture) -> None:
-        """Test that weather data is cached correctly."""
+    def test_get_weather_caching_text(self, mocker: MockerFixture) -> None:
+        """Test that text weather data is cached correctly."""
         # Set cache duration
         set_cache_duration(300)
 
@@ -243,13 +316,45 @@ class TestWeatherFetching:
         mock_get = mocker.patch("requests.get", return_value=mock_response)
 
         # First call should make a request
-        result1 = get_weather(location="CacheTest")
+        result1 = get_weather(location="CacheTest", format="text")
         assert result1 == "Cached weather data"
         assert mock_get.call_count == 1
 
         # Second call should use cache
-        result2 = get_weather(location="CacheTest")
+        result2 = get_weather(location="CacheTest", format="text")
         assert result2 == "Cached weather data"
+        assert mock_get.call_count == 1  # Still 1, no new request
+
+        # Restore cache duration
+        set_cache_duration(600)
+        
+    def test_get_weather_caching_json(self, mocker: MockerFixture) -> None:
+        """Test that JSON weather data is cached and properly converted to Pydantic model."""
+        # Set cache duration
+        set_cache_duration(300)
+
+        # Clear cache
+        clear_cache()
+
+        # Sample JSON data
+        sample_json = {"current_condition": [{"temp_C": "20"}]}
+        
+        # Mock requests.get
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.text = json.dumps(sample_json)
+        mock_get = mocker.patch("requests.get", return_value=mock_response)
+
+        # First call should make a request
+        result1 = get_weather(location="CacheTest", format="json")
+        assert result1.current_condition[0].temp_C == "20"
+        assert mock_get.call_count == 1
+
+        # Second call should use cache and still return a WeatherResponse
+        result2 = get_weather(location="CacheTest", format="json")
+        from fetch_my_weather.models import WeatherResponse
+        assert isinstance(result2, WeatherResponse)
+        assert result2.current_condition[0].temp_C == "20"
         assert mock_get.call_count == 1  # Still 1, no new request
 
         # Restore cache duration

@@ -5,6 +5,7 @@ This script demonstrates the most common ways to use the fetch-my-weather packag
 to fetch weather data.
 """
 
+import json
 import time
 
 import fetch_my_weather
@@ -14,31 +15,50 @@ def main() -> None:
     """Run the basic usage examples."""
     print("=== fetch-my-weather Basic Usage Examples ===\n")
 
-    # Example 1: Current location weather (based on IP)
-    print("Example 1: Current location weather (based on IP)")
-    weather = fetch_my_weather.get_weather()
-    if isinstance(weather, str) and not weather.startswith("Error:"):
-        print(weather)
+    # Example 1: Current location weather in JSON format (based on IP)
+    print("Example 1: Current location weather in JSON format (based on IP)")
+    weather = fetch_my_weather.get_weather()  # Default format is now 'json'
+    if isinstance(weather, dict):
+        print("Weather data received as JSON (Python dictionary):")
+        # Extract some key information from the JSON
+        if "current_condition" in weather and weather["current_condition"]:
+            current = weather["current_condition"][0]
+            print(f"Temperature: {current.get('temp_C', 'N/A')}°C / {current.get('temp_F', 'N/A')}°F")
+            print(f"Condition: {current.get('weatherDesc', [{}])[0].get('value', 'N/A')}")
+            print(f"Humidity: {current.get('humidity', 'N/A')}%")
+            print(f"Wind: {current.get('windspeedKmph', 'N/A')} km/h, {current.get('winddir16Point', 'N/A')}")
+        
+        # Print the full JSON for reference (pretty-printed)
+        print("\nFull JSON response:")
+        print(json.dumps(weather, indent=2))
     else:
         print(f"Could not get current weather: {weather}")
     print("\n" + "-" * 50 + "\n")
 
-    # Example 2: Weather for a specific city
-    print("Example 2: Weather for Paris")
-    paris_weather = fetch_my_weather.get_weather(location="Paris")
+    # Example 2: Weather for a specific city in text format
+    print("Example 2: Weather for Paris in text format")
+    paris_weather = fetch_my_weather.get_weather(location="Paris", format="text")
     if isinstance(paris_weather, str) and not paris_weather.startswith("Error:"):
         print(paris_weather)
     else:
         print(f"Could not get Paris weather: {paris_weather}")
     print("\n" + "-" * 50 + "\n")
 
-    # Example 3: Weather with options (compact view, metric units)
-    print("Example 3: Compact weather for Berlin (metric units)")
+    # Example 3: Weather with options (compact view, metric units) in JSON
+    print("Example 3: Compact weather for Berlin (metric units) in JSON")
     berlin_weather = fetch_my_weather.get_weather(
-        location="Berlin", view_options="0", units="m"
+        location="Berlin", view_options="0", units="m", format="json"
     )
-    if isinstance(berlin_weather, str) and not berlin_weather.startswith("Error:"):
-        print(berlin_weather)
+    if isinstance(berlin_weather, dict):
+        # Extract forecast information
+        if "weather" in berlin_weather:
+            print("Weather forecast for Berlin:")
+            for day in berlin_weather.get("weather", []):
+                date = day.get("date", "N/A")
+                max_temp = day.get("maxtempC", "N/A")
+                min_temp = day.get("mintempC", "N/A")
+                desc = day.get("hourly", [{}])[0].get("weatherDesc", [{}])[0].get("value", "N/A")
+                print(f"Date: {date}, Min: {min_temp}°C, Max: {max_temp}°C, Condition: {desc}")
     else:
         print(f"Could not get Berlin weather: {berlin_weather}")
     print("\n" + "-" * 50 + "\n")
@@ -70,9 +90,9 @@ def main() -> None:
         print(f"Could not get Christmas moon phase: {xmas_moon}")
     print("\n" + "-" * 50 + "\n")
 
-    # Example 7: PNG weather image (save to file)
-    print("Example 7: Weather as PNG image")
-    london_png = fetch_my_weather.get_weather(location="London", is_png=True)
+    # Example 7: PNG weather image (save to file) using format parameter
+    print("Example 7: Weather as PNG image using format parameter")
+    london_png = fetch_my_weather.get_weather(location="London", format="png")
     if isinstance(london_png, bytes):
         file_size = len(london_png)
         print(f"Successfully fetched London weather as PNG ({file_size} bytes)")
@@ -117,8 +137,36 @@ def main() -> None:
 
     print("\n" + "-" * 50 + "\n")
 
-    # Example 9: Error handling (intentional error)
-    print("Example 9: Error handling demonstration")
+    # Example 9: Mock data functionality
+    print("Example 9: Mock data functionality")
+    print("Enabling mock data mode...")
+    fetch_my_weather.set_mock_mode(True)
+    
+    print("\nMock JSON data:")
+    mock_json = fetch_my_weather.get_weather(location="London")
+    if isinstance(mock_json, dict):
+        # Extract and print some key information
+        current = mock_json["current_condition"][0]
+        print(f"Temperature: {current['temp_C']}°C")
+        print(f"Condition: {current['weatherDesc'][0]['value']}")
+        print(f"Location: {mock_json['nearest_area'][0]['areaName'][0]['value']}, " +
+              f"{mock_json['nearest_area'][0]['country'][0]['value']}")
+    
+    print("\nMock text data:")
+    mock_text = fetch_my_weather.get_weather(location="London", format="text")
+    print(mock_text)
+    
+    print("\nMock PNG data (sample):")
+    mock_png = fetch_my_weather.get_weather(location="London", format="png")
+    print(f"Received {len(mock_png)} bytes of mock PNG data")
+    
+    # Disable mock mode
+    print("\nDisabling mock data mode...")
+    fetch_my_weather.set_mock_mode(False)
+    print("\n" + "-" * 50 + "\n")
+    
+    # Example 10: Error handling (intentional error)
+    print("Example 10: Error handling demonstration")
     bad_result = fetch_my_weather.get_weather(
         location="ThisPlaceDefinitelyDoesNotExist12345"
     )

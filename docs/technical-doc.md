@@ -4,20 +4,22 @@ This document provides technical details about the implementation of the `fetch-
 
 ## Architecture Overview
 
-`fetch-my-weather` is intentionally designed with a simple, flat architecture consisting of a small number of public functions and a few private helper functions.
+`fetch-my-weather` is intentionally designed with a simple, structured architecture consisting of public functions, Pydantic models, and a few private helper functions.
 
 ### File Structure
 
 ```
 src/fetch_my_weather/
-├── __init__.py      # Exports public API
-└── core.py          # Core implementation
+├── __init__.py      # Exports public API and models
+├── core.py          # Core implementation
+└── models.py        # Pydantic data models
 ```
 
 ### Module Layout
 
-- **__init__.py**: Exports the public API functions and package metadata
+- **__init__.py**: Exports the public API functions, models, and package metadata
 - **core.py**: Contains all implementation code, including public API functions and private helper functions
+- **models.py**: Contains Pydantic models that represent the structure of weather data
 
 ## Data Flow
 
@@ -25,12 +27,16 @@ The basic flow of data through the package is:
 
 1. User calls `get_weather()` with parameters
 2. Parameters are validated
-3. URL is constructed using `_build_url()`
-4. Cache is checked using `_get_from_cache()`
-5. If data is not in cache, HTTP request is made
-6. Response is processed
-7. Response is stored in cache using `_add_to_cache()`
-8. Data is returned to the user
+3. If mock mode is enabled, mock data is returned
+4. URL is constructed using `_build_url()`
+5. Cache is checked using `_get_from_cache()`
+6. If data is not in cache, HTTP request is made
+7. Response is processed
+   - JSON responses are parsed and converted to Pydantic models
+   - Text responses are returned as strings
+   - PNG responses are returned as bytes
+8. Response is stored in cache using `_add_to_cache()`
+9. Data is returned to the user
 
 ```
 ┌─────────────┐    ┌───────────────┐    ┌─────────────┐
@@ -51,13 +57,26 @@ The `_build_url()` function handles the complex logic of constructing proper URL
 
 - Location specification
 - Option formatting
-- PNG vs text mode differences
+- Output format (JSON, text, PNG)
 - Moon phase requests
 - Language settings
 
 This function is critical because the weather service has different URL formats depending on the type of request.
 
-### 2. Caching System
+### 2. Pydantic Models
+
+The package uses Pydantic models to provide structured, type-safe access to JSON weather data:
+
+- `WeatherResponse`: Top-level model representing the complete API response
+- `CurrentCondition`: Weather conditions at the current time
+- `NearestArea`: Location information about the requested area
+- `DailyForecast`: Weather forecast for a specific day 
+- `HourlyForecast`: Weather forecast for a specific hour
+- `Astronomy`: Sunrise, sunset, and moon phase data
+
+These models provide validation, type hints, and structured access to the data.
+
+### 3. Caching System
 
 The caching system consists of:
 
@@ -69,16 +88,28 @@ The caching system consists of:
 
 The cache uses URLs as keys and stores tuples of `(timestamp, data)` as values. This allows for time-based expiration of cache entries.
 
-### 3. HTTP Request Handling
+### 4. Mock Data System
+
+The mock data system allows for development and testing without making real API calls:
+
+- A module-level flag `_USE_MOCK_DATA` to enable/disable mock mode
+- Mock data for all three formats (JSON, text, PNG)
+- Public `set_mock_mode()` function to control mock mode
+- Per-request control with the `use_mock` parameter
+
+Mock data follows the same structure as real API responses, ensuring that code will work the same with both.
+
+### 5. HTTP Request Handling
 
 HTTP requests are made using the `requests` library. This section of the code:
 
 - Sets appropriate headers (User-Agent)
 - Makes the GET request with timeout
-- Processes the response based on content type (text vs binary)
+- Processes the response based on format (JSON, text, PNG)
+- Converts JSON responses to Pydantic models
 - Handles various error conditions
 
-### 4. Error Handling
+### 6. Error Handling
 
 The package uses a consistent approach to error handling:
 
@@ -87,6 +118,7 @@ The package uses a consistent approach to error handling:
 - Error messages are returned as strings that start with "Error:"
 - HTTP errors include status codes
 - Network errors include details about the failure
+- JSON parsing errors include information about the validation failure
 
 ## Implementation Details
 
@@ -120,16 +152,23 @@ else:
 
 This pattern was chosen to make error handling more accessible to beginners.
 
-### Content Type Detection
+### Format Selection and Response Processing
 
-The package uses the request parameter `is_png` to determine how to process the response:
+The package uses the `format` parameter to determine how to process the response:
 
 ```python
-if is_png:
+if format == "png" or is_png:
     data = response.content  # Return raw bytes for images
+elif format == "json":
+    data = response.text
+    json_data = json.loads(data)
+    weather_response = WeatherResponse.parse_obj(json_data)  # Convert to Pydantic model
+    return weather_response
 else:
     data = response.text     # Return decoded text
 ```
+
+The older `is_png` parameter is still supported for backward compatibility.
 
 ## Performance Considerations
 
@@ -161,13 +200,25 @@ Tests use mocking to avoid making actual network requests, ensuring tests are fa
 
 ## Extensibility
 
-The package was designed with teaching in mind rather than extensibility, but it could be extended in several ways:
+The package was designed with teaching in mind, but it also provides good extensibility:
 
-1. Adding support for additional weather services
-2. Implementing more sophisticated caching (e.g., persistent cache)
-3. Adding structured data parsing for weather information
-4. Supporting more output formats
+1. **Data Models**: The Pydantic models can be extended or customized
+2. **Mock Data**: Mock data can be modified for different testing scenarios
+3. **Additional Weather Services**: Support could be added for other weather APIs
+4. **Advanced Caching**: The caching system could be enhanced with persistence
+5. **Additional Output Formats**: New formats could be added beyond JSON, text, and PNG
 
 ## Dependencies
 
-The only external dependency is the `requests` library, which was chosen for its simplicity and widespread use. This minimizes installation issues and keeps the package lightweight.
+The package has two external dependencies:
+
+1. **requests**: Used for making HTTP requests to the weather service
+   - Chosen for its simplicity and widespread use
+   - Well-maintained and reliable
+
+2. **pydantic**: Used for data validation and parsing
+   - Provides type safety and validation
+   - Makes JSON data easier to work with
+   - Excellent integration with IDEs for autocompletion
+
+Both dependencies are widely used and well-maintained, minimizing potential issues.

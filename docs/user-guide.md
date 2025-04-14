@@ -12,13 +12,16 @@ Welcome to `fetch-my-weather`, a beginner-friendly Python package for accessing 
    - [Different Weather Views](#different-weather-views)
    - [Changing Units](#changing-units)
    - [Language Support](#language-support)
+   - [Data Formats](#data-formats)
 4. [Moon Phases](#moon-phases)
 5. [Weather Images](#weather-images)
-6. [Caching](#caching)
-7. [Error Handling](#error-handling)
-8. [Advanced Usage](#advanced-usage)
-9. [Common Issues](#common-issues)
-10. [Educational Notes](#educational-notes)
+6. [Working with JSON & Models](#working-with-json--models)
+7. [Caching](#caching)
+8. [Mock Mode](#mock-mode)
+9. [Error Handling](#error-handling)
+10. [Advanced Usage](#advanced-usage)
+11. [Common Issues](#common-issues)
+12. [Educational Notes](#educational-notes)
 
 ## Installation
 
@@ -35,12 +38,13 @@ Here's a basic example to get you started:
 ```python
 import fetch_my_weather
 
-# Get current location weather (based on your IP address)
+# Get current location weather as a structured model (default)
 weather = fetch_my_weather.get_weather()
-print(weather)
+print(f"Temperature: {weather.current_condition[0].temp_C}°C")
+print(f"Condition: {weather.current_condition[0].weatherDesc[0].value}")
 
-# Get weather for a specific city
-paris_weather = fetch_my_weather.get_weather(location="Paris")
+# Get weather for a specific city as plain text
+paris_weather = fetch_my_weather.get_weather(location="Paris", format="text")
 print(paris_weather)
 ```
 
@@ -53,9 +57,13 @@ When called without a location, `fetch_my_weather` detects your location based o
 ```python
 import fetch_my_weather
 
-# Get weather for current location
+# Get weather for current location (returns a Pydantic model by default)
 current_weather = fetch_my_weather.get_weather()
-print(current_weather)
+
+# Access structured data
+temperature = current_weather.current_condition[0].temp_C
+condition = current_weather.current_condition[0].weatherDesc[0].value
+print(f"It's {condition} and {temperature}°C")
 ```
 
 ### Weather for a Specific Location
@@ -143,6 +151,26 @@ russian = fetch_my_weather.get_weather(location="Moscow", lang="ru")
 chinese = fetch_my_weather.get_weather(location="Beijing", lang="zh-cn")
 ```
 
+### Data Formats
+
+The package supports multiple data formats to suit different needs:
+
+```python
+# JSON format (default) - returns a Pydantic model for structured data access
+json_weather = fetch_my_weather.get_weather(location="London")
+# Access data with type safety and autocompletion
+temp = json_weather.current_condition[0].temp_C 
+
+# Text format - returns plain text with ASCII art (for direct display)
+text_weather = fetch_my_weather.get_weather(location="Paris", format="text")
+print(text_weather)
+
+# PNG format - returns image bytes
+png_weather = fetch_my_weather.get_weather(location="Tokyo", format="png")
+with open("weather.png", "wb") as f:
+    f.write(png_weather)
+```
+
 ## Moon Phases
 
 You can also get information about moon phases:
@@ -164,8 +192,8 @@ paris_moon = fetch_my_weather.get_weather(is_moon=True, moon_location_hint=",+Pa
 Weather data can also be returned as PNG images:
 
 ```python
-# Get weather as PNG image (returns bytes)
-london_png = fetch_my_weather.get_weather(location="London", is_png=True)
+# Get weather as PNG image using format parameter (returns bytes)
+london_png = fetch_my_weather.get_weather(location="London", format="png")
 
 # Save the PNG to a file
 with open("london_weather.png", "wb") as f:
@@ -174,23 +202,67 @@ with open("london_weather.png", "wb") as f:
 # Get transparent PNG 
 transparent_png = fetch_my_weather.get_weather(
     location="London", 
-    is_png=True, 
+    format="png", 
     png_options="t"
 )
 
 # Get PNG with padding
 padded_png = fetch_my_weather.get_weather(
     location="London", 
-    is_png=True, 
+    format="png", 
     png_options="p"
 )
 
 # Combine PNG options
 transparent_padded = fetch_my_weather.get_weather(
     location="London", 
-    is_png=True, 
+    format="png", 
     png_options="tp"
 )
+
+# Legacy method (deprecated but still supported)
+legacy_png = fetch_my_weather.get_weather(location="London", is_png=True)
+```
+
+## Working with JSON & Models
+
+When using the default JSON format, the package returns data as Pydantic models that provide type safety and structure:
+
+```python
+from fetch_my_weather import WeatherResponse
+
+# Get weather data as a model (this is the default)
+weather = fetch_my_weather.get_weather(location="London")
+
+# Using type hints for better IDE support
+weather_typed: WeatherResponse = fetch_my_weather.get_weather(location="London")
+
+# Access current conditions
+current = weather.current_condition[0]
+print(f"Temperature: {current.temp_C}°C")
+print(f"Feels like: {current.FeelsLikeC}°C")
+print(f"Condition: {current.weatherDesc[0].value}")
+print(f"Humidity: {current.humidity}%")
+print(f"Wind: {current.windspeedKmph} km/h, {current.winddir16Point}")
+
+# Access location information
+location = weather.nearest_area[0]
+print(f"Location: {location.areaName[0].value}, {location.country[0].value}")
+print(f"Region: {location.region[0].value}")
+print(f"Coordinates: {location.latitude}, {location.longitude}")
+
+# Access forecast data
+for day in weather.weather:
+    print(f"Date: {day.date}")
+    print(f"Max/Min: {day.maxtempC}°C/{day.mintempC}°C")
+    
+    # Access astronomy data
+    astronomy = day.astronomy[0]
+    print(f"Sunrise: {astronomy.sunrise}, Sunset: {astronomy.sunset}")
+    
+    # Access hourly forecast (just first entry as example)
+    hour = day.hourly[0]
+    print(f"Time: {hour.time}, Temp: {hour.tempC}°C")
 ```
 
 ## Caching
@@ -210,6 +282,35 @@ fetch_my_weather.set_cache_duration(0)
 fetch_my_weather.clear_cache()
 ```
 
+## Mock Mode
+
+For development and testing without hitting API rate limits, the package includes a mock mode:
+
+```python
+import fetch_my_weather
+
+# Enable mock mode globally
+fetch_my_weather.set_mock_mode(True)
+
+# Now all requests will use mock data instead of real API calls
+mock_weather = fetch_my_weather.get_weather(location="London")
+print(f"Temperature: {mock_weather.current_condition[0].temp_C}°C")
+
+# Use mock mode for a single request
+real_weather = fetch_my_weather.get_weather(location="Paris", use_mock=False)
+mock_weather = fetch_my_weather.get_weather(location="Berlin", use_mock=True)
+
+# Disable mock mode
+fetch_my_weather.set_mock_mode(False)
+```
+
+Mock mode provides realistic sample data that matches the structure of real API responses, making it ideal for:
+
+- Development without internet connection
+- Avoiding rate limits during testing
+- Creating reproducible examples
+- Writing unit tests
+
 ## Error Handling
 
 One of the key features of `fetch_my_weather` is its beginner-friendly error handling. Instead of raising exceptions, it returns error messages as strings:
@@ -223,8 +324,10 @@ result = fetch_my_weather.get_weather(location="NonExistentPlace12345")
 # Check if we got an error message
 if isinstance(result, str) and result.startswith("Error:"):
     print(f"Oops! Something went wrong: {result}")
+elif isinstance(result, fetch_my_weather.WeatherResponse):
+    print(f"Weather data received for {result.nearest_area[0].areaName[0].value}")
 else:
-    print("Weather data:", result)
+    print("Weather data received (non-JSON format)")
 ```
 
 ## Advanced Usage

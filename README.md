@@ -8,8 +8,10 @@ A beginner-friendly Python package for fetching weather data, designed for educa
 - 🌙 Moon phase information
 - 🗺️ Location-based weather (cities, airports, coordinates)
 - 🌍 Multiple language support
-- 📊 Text and PNG output formats
+- 📊 Multiple output formats: JSON, text and PNG
+- 🏗️ Type-safe Pydantic models for JSON responses
 - 🚀 Built-in caching to be nice to the wttr.in service
+- 🧪 Mock mode for development and testing without API rate limits
 - 🛡️ Beginner-friendly error handling (no exceptions)
 - 📚 Designed for teaching Python and API interactions
 - 🤖 LLM-ready with comprehensive [LLM guide](LLM-GUIDE.md) you can upload to AI assistants
@@ -25,12 +27,12 @@ pip install fetch-my-weather
 ```python
 import fetch_my_weather
 
-# Get weather for your current location (based on IP)
-current_weather = fetch_my_weather.get_weather()
-print(current_weather)
+# Get weather for your current location (based on IP) as JSON
+current_weather = fetch_my_weather.get_weather()  # Default format is 'json'
+print(f"Temperature: {current_weather['current_condition'][0]['temp_C']}°C")
 
-# Get weather for Berlin in metric units
-berlin_weather = fetch_my_weather.get_weather(location="Berlin", units="m")
+# Get weather for Berlin in metric units as text
+berlin_weather = fetch_my_weather.get_weather(location="Berlin", units="m", format="text")
 print(berlin_weather)
 
 # Get moon phase for a specific date
@@ -45,9 +47,10 @@ fetch-my-weather is designed as a teaching tool for:
 - Introducing API interactions in a beginner-friendly way
 - Demonstrating HTTP requests without exception handling complexity
 - Teaching caching concepts
-- Working with different data formats (text and binary/PNG)
+- Working with different data formats (JSON, text and binary/PNG)
 - Understanding URL construction and query parameters
 - Processing and displaying weather data in applications
+- Parsing and working with JSON data
 
 ### Mini-Projects
 
@@ -66,11 +69,14 @@ These projects provide practical examples and serve as great teaching resources 
 ```python
 import fetch_my_weather
 
-# Basic usage - current location
+# JSON format (default) - current location with Pydantic model
 weather = fetch_my_weather.get_weather()
+# Access data using type-safe models with autocomplete
+temp = weather.current_condition[0].temp_C
+condition = weather.current_condition[0].weatherDesc[0].value
 
-# Specific location
-nyc_weather = fetch_my_weather.get_weather(location="New York")
+# Text format - specific location
+nyc_weather = fetch_my_weather.get_weather(location="New York", format="text")
 
 # Airport code
 lax_weather = fetch_my_weather.get_weather(location="lax")
@@ -78,17 +84,21 @@ lax_weather = fetch_my_weather.get_weather(location="lax")
 # Geographic coordinates
 coord_weather = fetch_my_weather.get_weather(location="48.8567,2.3508")
 
-# Compact view
-compact_weather = fetch_my_weather.get_weather(view_options="0")
+# Compact view (applies to text format)
+compact_weather = fetch_my_weather.get_weather(view_options="0", format="text")
 
 # Compact view + quiet (no city name in header)
-compact_quiet = fetch_my_weather.get_weather(view_options="0q")
+compact_quiet = fetch_my_weather.get_weather(view_options="0q", format="text")
 
 # Units: metric (default), USCS (u), or wind in m/s (M)
 us_units = fetch_my_weather.get_weather(units="u")
 
 # Different language
 spanish = fetch_my_weather.get_weather(lang="es")
+
+# Type annotations for better IDE support
+from fetch_my_weather import WeatherResponse
+weather_typed: WeatherResponse = fetch_my_weather.get_weather()
 ```
 
 ### Getting Moon Phase Data
@@ -111,15 +121,18 @@ paris_moon = fetch_my_weather.get_weather(is_moon=True, moon_location_hint=",+Pa
 ```python
 import fetch_my_weather
 
-# Weather as PNG (returns bytes)
-london_png = fetch_my_weather.get_weather(location="London", is_png=True)
+# Weather as PNG using format parameter (returns bytes)
+london_png = fetch_my_weather.get_weather(location="London", format="png")
 
 # Save PNG to file
 with open("london_weather.png", "wb") as f:
     f.write(london_png)
 
 # PNG with options (transparency)
-transparent_png = fetch_my_weather.get_weather(location="Tokyo", is_png=True, png_options="t")
+transparent_png = fetch_my_weather.get_weather(location="Tokyo", format="png", png_options="t")
+
+# Legacy method (deprecated but still supported)
+legacy_png = fetch_my_weather.get_weather(location="Paris", is_png=True)
 ```
 
 ### Configuration Settings
@@ -135,6 +148,12 @@ fetch_my_weather.clear_cache()
 
 # Set a custom user agent
 fetch_my_weather.set_user_agent("My Weather App v1.0")
+
+# Enable mock mode (for development and testing)
+fetch_my_weather.set_mock_mode(True)  # Use mock data instead of real API calls
+
+# Use mock mode for a single request
+mock_weather = fetch_my_weather.get_weather(location="London", use_mock=True)
 ```
 
 ### Error Handling
@@ -145,11 +164,42 @@ import fetch_my_weather
 # fetch-my-weather never raises exceptions, it returns error messages as strings
 result = fetch_my_weather.get_weather(location="NonExistentPlace12345")
 
-# Check if result is an error message
+# Check if result is an error message (JSON format will return dict when successful)
 if isinstance(result, str) and result.startswith("Error:"):
     print(f"Something went wrong: {result}")
+elif isinstance(result, dict):
+    print("Weather data received successfully as JSON")
 else:
-    print("Weather data:", result)
+    print("Weather data received successfully")
+```
+
+## Pydantic Models
+
+When using the JSON format (default), the package returns a structured `WeatherResponse` Pydantic model that contains:
+
+- `current_condition`: Current weather data (temperature, humidity, etc.)
+- `nearest_area`: Location information (city, country, coordinates)
+- `weather`: Forecast data for multiple days
+- `request`: Information about the API request
+
+```python
+# Example of accessing model properties
+weather = fetch_my_weather.get_weather(location="London")
+
+# Current weather
+current = weather.current_condition[0]
+print(f"Temperature: {current.temp_C}°C")
+print(f"Condition: {current.weatherDesc[0].value}")
+
+# Location data  
+location = weather.nearest_area[0]
+print(f"Location: {location.areaName[0].value}, {location.country[0].value}")
+
+# Forecast
+for day in weather.weather:
+    print(f"Date: {day.date}")
+    print(f"Max temp: {day.maxtempC}°C, Min temp: {day.mintempC}°C")
+    print(f"Sunrise: {day.astronomy[0].sunrise}, Sunset: {day.astronomy[0].sunset}")
 ```
 
 ## Complete Parameter Reference
@@ -162,11 +212,13 @@ The `get_weather()` function accepts these parameters:
 | `units` | str | Units system: `m` (metric, default), `u` (US/imperial), `M` (wind in m/s) |
 | `view_options` | str | Display options: `0`-`3` (forecast days), `n` (narrow), `q` (quiet), etc. |
 | `lang` | str | Language code (e.g., `en`, `fr`, `es`, `ru`, `zh-cn`) |
-| `is_png` | bool | If `True`, return PNG image as bytes instead of text |
+| `format` | str | Output format: `json` (default), `text`, or `png` |
+| `is_png` | bool | If `True`, return PNG image as bytes instead of text (deprecated, use `format="png"`) |
 | `png_options` | str | PNG-specific options: `p` (padding), `t` (transparency), etc. |
 | `is_moon` | bool | If `True`, show moon phase instead of weather |
 | `moon_date` | str | Date for moon phase in `YYYY-MM-DD` format (with `is_moon=True`) |
 | `moon_location_hint` | str | Location hint for moon phase (e.g., `,+US`, `,+Paris`) |
+| `use_mock` | bool | If `True`, use mock data instead of making a real API request |
 
 ## Documentation
 

@@ -8,7 +8,36 @@ for educational use.
 
 __version__ = "0.1.3"
 
-from .core import clear_cache, get_weather, set_cache_duration, set_user_agent
+from .core import (
+    clear_cache,
+    get_weather,
+    set_cache_duration,
+    set_mock_mode,
+    set_user_agent,
+)
+from .models import (
+    Astronomy,
+    CurrentCondition,
+    DailyForecast,
+    HourlyForecast,
+    NearestArea,
+    WeatherResponse,
+)
 
 # For convenience, provide the most commonly used functions at the top level
-__all__ = ["get_weather", "clear_cache", "set_cache_duration", "set_user_agent"]
+__all__ = [
+    # Functions
+    "get_weather",
+    "clear_cache",
+    "set_cache_duration",
+    "set_user_agent",
+    "set_mock_mode",
+    
+    # Models
+    "WeatherResponse",
+    "CurrentCondition",
+    "NearestArea",
+    "DailyForecast",
+    "HourlyForecast",
+    "Astronomy",
+]
