@@ -49,7 +49,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "W", "I", "C4", "UP", "N"]
-ignore = ["E501"]  # Ignore line length violations
+ignore = ["E501", "N815"]  # Ignore line length violations and mixedCase variable names (for API field matching)
 
 # Formatter settings
 [tool.ruff.format]

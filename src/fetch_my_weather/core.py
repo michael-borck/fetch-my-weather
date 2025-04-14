@@ -637,17 +637,16 @@ def get_weather(
                     parsed_model: WeatherResponse = WeatherResponse.parse_obj(json_data)
                     return _wrap_response(parsed_model, cache_metadata, with_metadata)
                 except (json.JSONDecodeError, ValidationError) as e:
-                    # If JSON parsing fails, create error metadata
-                    error_metadata = _create_metadata(
-                        is_real_data=False,
-                        is_cached=True,
-                        is_mock=False,
-                        error_type=e.__class__.__name__,
-                        error_message=str(e),
-                        url=url,
-                    )
-
+                    # If JSON parsing fails and metadata is requested, create error metadata
                     if with_metadata:
+                        metadata = _create_metadata(
+                            is_real_data=False,
+                            is_cached=True,
+                            is_mock=False,
+                            error_type=e.__class__.__name__,
+                            error_message=str(e),
+                            url=url,
+                        )
                         # Return mock data with error metadata
                         return _create_mock_data(
                             format=format,
@@ -794,7 +793,7 @@ def get_weather(
                             error_message=f"Unable to parse JSON response from {url}",
                             with_metadata=with_metadata,
                             url=url,
-                            status_code=response.status_code
+                            status_code=response.status_code,
                         )
                         return _wrap_response(mock_data, metadata, with_metadata)
 

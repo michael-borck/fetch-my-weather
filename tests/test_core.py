@@ -15,7 +15,6 @@ from fetch_my_weather.core import (
     get_weather,
     set_cache_duration,
     set_user_agent,
-    set_mock_mode,
 )
 
 
