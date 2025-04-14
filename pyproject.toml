@@ -7,7 +7,7 @@ universal = 1
 
 [project]
 name = "fetch-my-weather"
-version = "0.2.0"
+version = "0.2.1"
 description = "A beginner-friendly Python package for fetching weather data, designed for educational use."
 readme = "README.md"
 authors = [{name = "Your Name", email = "your.email@example.com"}]
