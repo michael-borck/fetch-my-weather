@@ -20,26 +20,51 @@ import tempfile
 from datetime import datetime
 
 def get_weather_condition():
-    """Get the current weather condition"""
-    weather = fetch_my_weather.get_weather(view_options="0q")
+    """Get the current weather condition using structured JSON data"""
+    # Get weather with metadata for better error handling
+    response = fetch_my_weather.get_weather(
+        format="json",  # Use structured JSON data
+        with_metadata=True  # Get metadata about response
+    )
     
-    if isinstance(weather, str) and not weather.startswith("Error:"):
-        # Simple weather condition detection (could be improved)
-        weather_lower = weather.lower()
+    # Extract data and metadata
+    metadata = response.metadata
+    weather_data = response.data
+    
+    # Check if using mock data due to an error
+    if metadata.is_mock and metadata.error_message:
+        print(f"Note: Using mock weather data. ({metadata.error_message})")
+    
+    # Determine condition from structured data
+    if weather_data.current_condition:
+        current = weather_data.current_condition[0]
         
-        if "rain" in weather_lower or "shower" in weather_lower:
-            return "rainy"
-        elif "snow" in weather_lower or "blizzard" in weather_lower:
-            return "snowy"
-        elif "cloud" in weather_lower or "overcast" in weather_lower:
-            return "cloudy"
-        elif "sunny" in weather_lower or "clear" in weather_lower:
-            return "sunny"
-        else:
-            # Default to current weather image
-            return "current"
+        # Get the weather description
+        condition = "unknown"
+        if current.weatherDesc and current.weatherDesc[0].value:
+            weather_desc = current.weatherDesc[0].value.lower()
+            
+            # Map description to condition category
+            if "rain" in weather_desc or "shower" in weather_desc or "drizzle" in weather_desc:
+                condition = "rainy"
+            elif "snow" in weather_desc or "blizzard" in weather_desc or "sleet" in weather_desc:
+                condition = "snowy"
+            elif "cloud" in weather_desc or "overcast" in weather_desc:
+                condition = "cloudy"
+            elif "sunny" in weather_desc or "clear" in weather_desc:
+                condition = "sunny"
+            elif "fog" in weather_desc or "mist" in weather_desc:
+                condition = "foggy"
+            elif "thunder" in weather_desc or "storm" in weather_desc:
+                condition = "stormy"
+            else:
+                # Default to current weather image
+                condition = "current"
+                
+        print(f"Weather condition determined: {condition}")
+        return condition
     else:
-        print(f"Error getting weather: {weather}")
+        print("Error: No current condition data available")
         return None
 
 def set_wallpaper(image_path):

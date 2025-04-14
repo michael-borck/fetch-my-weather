@@ -71,22 +71,55 @@ class WeatherLogger:
     
     def log_current_weather(self):
         """Get current weather and log it to CSV"""
-        # Get current weather
-        weather = fetch_my_weather.get_weather(location=self.location, view_options="q")
+        # Get current weather using JSON format with metadata
+        response = fetch_my_weather.get_weather(
+            location=self.location,
+            format="json",
+            with_metadata=True
+        )
         
-        if isinstance(weather, str) and not weather.startswith("Error:"):
-            # Extract data points
+        # Extract data and metadata
+        metadata = response.metadata
+        weather_data = response.data
+        
+        # Check if using mock data
+        if metadata.is_mock:
+            print(f"Note: Logging mock weather data.")
+            if metadata.error_message:
+                print(f"(Reason: {metadata.error_message})")
+        
+        # Process and log structured data
+        if weather_data.current_condition:
+            # Get current timestamp
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            temperature = self.extract_temperature(weather)
-            condition = self.extract_condition(weather)
-            humidity = self.extract_humidity(weather)
-            wind_speed = self.extract_wind_speed(weather)
+            
+            # Extract location name from data if available
+            location_name = self.location or "current"
+            if weather_data.nearest_area and weather_data.nearest_area[0].areaName:
+                location_name = weather_data.nearest_area[0].areaName[0].value
+            
+            # Get current condition data
+            current = weather_data.current_condition[0]
+            
+            # Extract data points directly from the structured model
+            temperature = int(current.temp_C) if current.temp_C else None
+            
+            # Get weather description
+            condition = "unknown"
+            if current.weatherDesc and current.weatherDesc[0].value:
+                condition = current.weatherDesc[0].value.lower()
+            
+            # Get humidity
+            humidity = int(current.humidity) if current.humidity else None
+            
+            # Get wind speed
+            wind_speed = int(current.windspeedKmph) if current.windspeedKmph else None
             
             # Log to CSV
             with open(self.log_file, 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow([
-                    timestamp, self.location or "current", 
+                    timestamp, location_name, 
                     temperature, condition, humidity, wind_speed
                 ])
             
@@ -94,7 +127,7 @@ class WeatherLogger:
                   f"humidity: {humidity}%, wind: {wind_speed} km/h")
             return True
         else:
-            print(f"Error getting weather: {weather}")
+            print("Error: No current condition data available")
             return False
     
     def generate_daily_report(self, days=7):

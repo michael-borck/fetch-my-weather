@@ -23,13 +23,30 @@ def save_weather_image(location, save_directory="weather_images"):
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"{save_directory}/{location.replace(' ', '_')}_{current_time}.png"
     
-    # Get the weather as PNG
+    # Get the weather as PNG with metadata for error handling
     print(f"Getting weather for {location}...")
-    weather_png = fetch_my_weather.get_weather(location=location, is_png=True)
+    response = fetch_my_weather.get_weather(
+        location=location, 
+        format="png",  # Use PNG format (instead of deprecated is_png)
+        png_options="p",  # Add padding for better presentation
+        with_metadata=True  # Get metadata for error tracking
+    )
     
-    # Check if we got an error
+    # Check if we have metadata (using the new API)
+    if hasattr(response, 'metadata'):
+        metadata = response.metadata
+        weather_png = response.data
+        
+        # Check if we received mock data
+        if metadata.is_mock:
+            print(f"Note: Using mock weather image due to: {metadata.error_message}")
+    else:
+        # Assume it's bytes data directly (shouldn't happen with with_metadata=True)
+        weather_png = response
+    
+    # Ensure we have binary data
     if not isinstance(weather_png, bytes):
-        print(f"Error getting weather: {weather_png}")
+        print(f"Error: Did not receive valid image data")
         return False
     
     # Save the PNG to a file

@@ -105,42 +105,69 @@ def check_weather_alerts():
     location = config["location"]
     today = datetime.now().strftime("%Y-%m-%d")
     
-    # Get current weather
-    weather = fetch_my_weather.get_weather(location=location, view_options="q")
+    # Get current weather with JSON format and metadata for better handling
+    response = fetch_my_weather.get_weather(
+        location=location,
+        format="json",
+        with_metadata=True
+    )
     
-    if isinstance(weather, str) and not weather.startswith("Error:"):
+    # Extract data and metadata
+    metadata = response.metadata
+    weather_data = response.data
+    
+    # Check if using mock data
+    if metadata.is_mock:
+        print(f"Note: Using mock weather data for alerts.")
+        if metadata.error_message:
+            print(f"(Reason: {metadata.error_message})")
+    
+    # Process weather data using the structured Pydantic models
+    if weather_data.current_condition:
         alerts_triggered = []
-        weather_lower = weather.lower()
+        current = weather_data.current_condition[0]
+        
+        # Get weather description
+        weather_desc = ""
+        if current.weatherDesc and current.weatherDesc[0].value:
+            weather_desc = current.weatherDesc[0].value.lower()
+        
+        # Get temperature
+        temp = None
+        if current.temp_C:
+            temp = int(current.temp_C)
+        
+        # Get wind speed
+        wind = None
+        if current.windspeedKmph:
+            wind = int(current.windspeedKmph)
         
         # Check for rain
-        if config["alerts"]["rain"] and ("rain" in weather_lower or "shower" in weather_lower):
+        if config["alerts"]["rain"] and any(term in weather_desc for term in ["rain", "shower", "drizzle", "precipitation"]):
             if "rain" not in config["last_alerts"] or config["last_alerts"]["rain"] != today:
                 alerts_triggered.append(("Rain Alert", "Rain is expected today. Don't forget your umbrella!"))
                 config["last_alerts"]["rain"] = today
         
         # Check for snow
-        if config["alerts"]["snow"] and ("snow" in weather_lower or "blizzard" in weather_lower):
+        if config["alerts"]["snow"] and any(term in weather_desc for term in ["snow", "blizzard", "sleet", "ice"]):
             if "snow" not in config["last_alerts"] or config["last_alerts"]["snow"] != today:
                 alerts_triggered.append(("Snow Alert", "Snow is expected today. Dress warmly!"))
                 config["last_alerts"]["snow"] = today
         
         # Check for extreme temperatures
-        if config["alerts"]["extreme_temp"]:
-            temp = extract_temperature(weather)
-            if temp is not None:
-                if temp >= config["alerts"]["extreme_temp_threshold_high"]:
-                    if "high_temp" not in config["last_alerts"] or config["last_alerts"]["high_temp"] != today:
-                        alerts_triggered.append(("Heat Alert", f"High temperature of {temp}°C expected today. Stay hydrated!"))
-                        config["last_alerts"]["high_temp"] = today
-                elif temp <= config["alerts"]["extreme_temp_threshold_low"]:
-                    if "low_temp" not in config["last_alerts"] or config["last_alerts"]["low_temp"] != today:
-                        alerts_triggered.append(("Cold Alert", f"Low temperature of {temp}°C expected today. Dress warmly!"))
-                        config["last_alerts"]["low_temp"] = today
+        if config["alerts"]["extreme_temp"] and temp is not None:
+            if temp >= config["alerts"]["extreme_temp_threshold_high"]:
+                if "high_temp" not in config["last_alerts"] or config["last_alerts"]["high_temp"] != today:
+                    alerts_triggered.append(("Heat Alert", f"High temperature of {temp}°C expected today. Stay hydrated!"))
+                    config["last_alerts"]["high_temp"] = today
+            elif temp <= config["alerts"]["extreme_temp_threshold_low"]:
+                if "low_temp" not in config["last_alerts"] or config["last_alerts"]["low_temp"] != today:
+                    alerts_triggered.append(("Cold Alert", f"Low temperature of {temp}°C expected today. Dress warmly!"))
+                    config["last_alerts"]["low_temp"] = today
         
         # Check for strong wind
-        if config["alerts"]["wind"]:
-            wind = extract_wind_speed(weather)
-            if wind is not None and wind >= config["alerts"]["wind_threshold"]:
+        if config["alerts"]["wind"] and wind is not None:
+            if wind >= config["alerts"]["wind_threshold"]:
                 if "wind" not in config["last_alerts"] or config["last_alerts"]["wind"] != today:
                     alerts_triggered.append(("Wind Alert", f"Strong winds of {wind} km/h expected today. Be careful outside!"))
                     config["last_alerts"]["wind"] = today
@@ -154,7 +181,7 @@ def check_weather_alerts():
         
         return len(alerts_triggered) > 0
     else:
-        print(f"Error getting weather: {weather}")
+        print("Error: No current condition data available")
         return False
 
 def weather_alert_service():

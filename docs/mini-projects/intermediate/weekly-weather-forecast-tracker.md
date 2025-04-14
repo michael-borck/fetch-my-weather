@@ -29,34 +29,52 @@ def record_forecast():
     """Record today's forecast for the next few days"""
     location = "London"  # Change to your location
     
-    # Get the weather forecast
-    forecast = fetch_my_weather.get_weather(location=location)
+    # Get the weather forecast using JSON format with metadata
+    response = fetch_my_weather.get_weather(
+        location=location,
+        format="json",
+        with_metadata=True
+    )
     
-    if isinstance(forecast, str) and not forecast.startswith("Error:"):
-        # Record date and forecast
-        today = datetime.now()
+    # Extract data and metadata
+    metadata = response.metadata
+    weather_data = response.data
+    
+    # Check if using mock data
+    if metadata.is_mock:
+        print(f"Note: Using mock weather data. This may affect forecast accuracy.")
+        if metadata.error_message:
+            print(f"(Reason: {metadata.error_message})")
+    
+    # Record date and forecast
+    today = datetime.now()
+    
+    # Check if forecast file exists, create it if not
+    file_exists = os.path.isfile('weather_forecast.csv')
+    
+    with open('weather_forecast.csv', 'a', newline='') as csvfile:
+        fieldnames = ['forecast_date', 'target_date', 'forecasted_temp', 'actual_temp']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
-        # Check if forecast file exists, create it if not
-        file_exists = os.path.isfile('weather_forecast.csv')
+        if not file_exists:
+            writer.writeheader()
         
-        with open('weather_forecast.csv', 'a', newline='') as csvfile:
-            fieldnames = ['forecast_date', 'target_date', 'forecasted_temp', 'actual_temp']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            
-            if not file_exists:
-                writer.writeheader()
-            
-            # Extract forecasted temperatures (simplified approach)
-            # In reality, you'd want to parse the forecast more carefully
-            forecast_lines = forecast.split('\n')
-            for i in range(1, 4):  # Look at next 3 days
-                target_date = today + timedelta(days=i)
-                target_date_str = target_date.strftime('%Y-%m-%d')
+        # Get forecasted temperatures from structured data
+        if weather_data.weather:
+            for i, day in enumerate(weather_data.weather):
+                if i == 0:  # Skip today
+                    continue
+                    
+                if i > 3:  # Only look at next 3 days
+                    break
                 
-                # Get forecasted temperature (simplified)
-                temp = extract_temperature(forecast)
+                # Get the date from the forecast
+                target_date_str = day.date
                 
-                if temp is not None:
+                # Get max temperature for the day
+                if day.maxtempC:
+                    temp = day.maxtempC
+                    
                     writer.writerow({
                         'forecast_date': today.strftime('%Y-%m-%d'),
                         'target_date': target_date_str,
@@ -64,40 +82,55 @@ def record_forecast():
                         'actual_temp': ''  # Will be filled in later
                     })
                     print(f"Recorded forecast for {target_date_str}: {temp}°C")
-    else:
-        print(f"Could not get forecast: {forecast}")
+        else:
+            print("No forecast data available")
 
 def update_actual_temperatures():
     """Update recorded forecasts with actual temperatures"""
     today = datetime.now().strftime('%Y-%m-%d')
     
-    # Get today's actual weather
-    actual_weather = fetch_my_weather.get_weather(view_options="0q")
+    # Get today's actual weather using JSON format with metadata
+    response = fetch_my_weather.get_weather(
+        format="json",
+        with_metadata=True
+    )
     
-    if isinstance(actual_weather, str) and not actual_weather.startswith("Error:"):
-        # Extract actual temperature
-        actual_temp = extract_temperature(actual_weather)
+    # Extract data and metadata
+    metadata = response.metadata
+    weather_data = response.data
+    
+    # Check if using mock data
+    if metadata.is_mock:
+        print(f"Note: Using mock weather data for actual temperature.")
+        if metadata.error_message:
+            print(f"(Reason: {metadata.error_message})")
+    
+    # Get the current temperature from structured data
+    actual_temp = None
+    if weather_data.current_condition and weather_data.current_condition[0].temp_C:
+        actual_temp = weather_data.current_condition[0].temp_C
+        print(f"Current temperature: {actual_temp}°C")
+    
+    if actual_temp is not None:
+        # Read the existing CSV
+        rows = []
+        with open('weather_forecast.csv', 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                # Update rows where target_date is today and actual_temp is empty
+                if row['target_date'] == today and not row['actual_temp']:
+                    row['actual_temp'] = actual_temp
+                    print(f"Updated actual temperature for {today}: {actual_temp}°C")
+                rows.append(row)
         
-        if actual_temp is not None:
-            # Read the existing CSV
-            rows = []
-            with open('weather_forecast.csv', 'r', newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    # Update rows where target_date is today and actual_temp is empty
-                    if row['target_date'] == today and not row['actual_temp']:
-                        row['actual_temp'] = actual_temp
-                        print(f"Updated actual temperature for {today}: {actual_temp}°C")
-                    rows.append(row)
-            
-            # Write the updated data back
-            with open('weather_forecast.csv', 'w', newline='') as csvfile:
-                fieldnames = ['forecast_date', 'target_date', 'forecasted_temp', 'actual_temp']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(rows)
+        # Write the updated data back
+        with open('weather_forecast.csv', 'w', newline='') as csvfile:
+            fieldnames = ['forecast_date', 'target_date', 'forecasted_temp', 'actual_temp']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
     else:
-        print(f"Could not get actual weather: {actual_weather}")
+        print("Could not get current temperature data")
 
 def show_forecast_accuracy():
     """Show how accurate the forecasts have been"""

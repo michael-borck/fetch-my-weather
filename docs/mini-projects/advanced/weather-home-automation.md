@@ -88,55 +88,77 @@ class WeatherHomeAutomation:
             return default_config
     
     def get_current_weather(self):
-        """Get current weather data"""
+        """Get current weather data using structured JSON format with metadata"""
         location = self.config["location"]
-        weather_text = fetch_my_weather.get_weather(location=location, view_options="q")
         
-        if isinstance(weather_text, str) and not weather_text.startswith("Error:"):
-            weather_data = {
+        # Get weather using JSON format with metadata
+        response = fetch_my_weather.get_weather(
+            location=location,
+            format="json",
+            with_metadata=True
+        )
+        
+        # Extract data and metadata
+        metadata = response.metadata
+        weather_data = response.data
+        
+        # Check if using mock data
+        if metadata.is_mock:
+            print(f"Note: Using mock weather data for home automation.")
+            if metadata.error_message:
+                print(f"(Reason: {metadata.error_message})")
+        
+        # Process the structured data
+        if weather_data.current_condition:
+            # Get current condition data
+            current = weather_data.current_condition[0]
+            
+            # Extract temperature
+            temperature = None
+            if current.temp_C:
+                temperature = int(current.temp_C)
+                
+            # Extract wind speed
+            wind_speed = None
+            if current.windspeedKmph:
+                wind_speed = int(current.windspeedKmph)
+                
+            # Determine conditions
+            conditions = []
+            weather_desc = ""
+            if current.weatherDesc and current.weatherDesc[0].value:
+                weather_desc = current.weatherDesc[0].value.lower()
+                
+                # Identify conditions
+                if any(term in weather_desc for term in ["rain", "shower", "drizzle"]):
+                    conditions.append("rain")
+                if any(term in weather_desc for term in ["snow", "blizzard", "sleet"]):
+                    conditions.append("snow")
+                if any(term in weather_desc for term in ["sunny", "clear"]):
+                    conditions.append("sunny")
+                if any(term in weather_desc for term in ["cloud", "overcast"]):
+                    conditions.append("cloudy")
+                if any(term in weather_desc for term in ["fog", "mist"]):
+                    conditions.append("fog")
+                if any(term in weather_desc for term in ["thunder", "lightning", "storm"]):
+                    conditions.append("thunderstorm")
+            
+            # Create weather data structure
+            structured_data = {
                 "timestamp": datetime.now().isoformat(),
-                "text": weather_text,
-                "conditions": self.extract_conditions(weather_text)
+                "text": weather_desc,  # Store the description text
+                "conditions": {
+                    "temperature": temperature,
+                    "wind_speed": wind_speed,
+                    "conditions": conditions
+                }
             }
-            self.current_weather = weather_data
-            return weather_data
+            
+            self.current_weather = structured_data
+            return structured_data
         else:
-            print(f"Error getting weather: {weather_text}")
+            print("Error: No current condition data available")
             return None
-    
-    def extract_conditions(self, weather_text):
-        """Extract conditions from weather text"""
-        weather_lower = weather_text.lower()
-        
-        # Extract temperature
-        temp_match = re.search(r'(\-?\d+)\s*°C', weather_text)
-        temperature = int(temp_match.group(1)) if temp_match else None
-        
-        # Extract wind speed
-        wind_match = re.search(r'(\d+)\s*km/h', weather_text)
-        wind_speed = int(wind_match.group(1)) if wind_match else None
-        
-        # Determine conditions
-        conditions = []
-        
-        if "rain" in weather_lower or "shower" in weather_lower:
-            conditions.append("rain")
-        if "snow" in weather_lower or "blizzard" in weather_lower:
-            conditions.append("snow")
-        if "sunny" in weather_lower or "clear" in weather_lower:
-            conditions.append("sunny")
-        if "cloud" in weather_lower or "overcast" in weather_lower:
-            conditions.append("cloudy")
-        if "fog" in weather_lower or "mist" in weather_lower:
-            conditions.append("fog")
-        if "thunder" in weather_lower or "lightning" in weather_lower:
-            conditions.append("thunderstorm")
-        
-        return {
-            "temperature": temperature,
-            "wind_speed": wind_speed,
-            "conditions": conditions
-        }
     
     def check_rule(self, rule):
         """Check if a rule should be triggered based on current weather"""
