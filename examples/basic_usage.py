@@ -150,18 +150,18 @@ def main() -> None:
 
     # Example 7: PNG weather image (save to file) using format parameter
     print("Example 7: Weather as PNG image using format parameter")
-    london_png = fetch_my_weather.get_weather(location="London", format="png")
-    if isinstance(london_png, bytes):
-        file_size = len(london_png)
-        print(f"Successfully fetched London weather as PNG ({file_size} bytes)")
+    city_png = fetch_my_weather.get_weather(location="Paris", format="png")
+    if isinstance(city_png, bytes):
+        file_size = len(city_png)
+        print(f"Successfully fetched Paris weather as PNG ({file_size} bytes)")
         try:
-            with open("london_weather.png", "wb") as f:
-                f.write(london_png)
-            print("Saved london_weather.png")
+            with open("paris_weather.png", "wb") as f:
+                f.write(city_png)
+            print("Saved paris_weather.png")
         except OSError as e:
             print(f"Error saving PNG: {e}")
     else:
-        print(f"Could not get London PNG: {london_png}")
+        print(f"Could not get Paris PNG: {city_png}")
     print("\n" + "-" * 50 + "\n")
 
     # Example 8: Caching demonstration
@@ -201,7 +201,7 @@ def main() -> None:
     fetch_my_weather.set_mock_mode(True)
 
     print("\nMock JSON data:")
-    mock_json = fetch_my_weather.get_weather(location="London")
+    mock_json = fetch_my_weather.get_weather(location="AnyCity")
     if isinstance(mock_json, dict):
         # Extract and print some key information
         current = mock_json["current_condition"][0]
@@ -211,13 +211,15 @@ def main() -> None:
             f"Location: {mock_json['nearest_area'][0]['areaName'][0]['value']}, "
             + f"{mock_json['nearest_area'][0]['country'][0]['value']}"
         )
+        if "mock_data_notice" in mock_json:
+            print(f"Notice: {mock_json['mock_data_notice']}")
 
     print("\nMock text data:")
-    mock_text = fetch_my_weather.get_weather(location="London", format="text")
+    mock_text = fetch_my_weather.get_weather(location="AnyCity", format="text")
     print(mock_text)
 
     print("\nMock PNG data (sample):")
-    mock_png = fetch_my_weather.get_weather(location="London", format="png")
+    mock_png = fetch_my_weather.get_weather(location="AnyCity", format="png")
     print(f"Received {len(mock_png)} bytes of mock PNG data")
 
     # Disable mock mode

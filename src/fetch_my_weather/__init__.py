@@ -6,7 +6,7 @@ from weather services, with built-in caching and error handling to make it suita
 for educational use.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from .core import (
     clear_cache,

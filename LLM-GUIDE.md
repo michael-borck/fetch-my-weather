@@ -122,7 +122,7 @@ print(berlin_weather)
 import fetch_my_weather
 
 # Get weather data as a Pydantic model
-weather = fetch_my_weather.get_weather(location="London")
+weather = fetch_my_weather.get_weather(location="Paris")
 
 # Access data with type safety
 if weather.current_condition:
@@ -142,7 +142,7 @@ if weather.current_condition:
 import fetch_my_weather
 
 # Get weather data as a raw Python dictionary
-weather = fetch_my_weather.get_weather(location="London", format="raw_json")
+weather = fetch_my_weather.get_weather(location="Paris", format="raw_json")
 
 # Access data using dictionary key/value access
 if "current_condition" in weather and weather["current_condition"]:
@@ -158,6 +158,13 @@ if "current_condition" in weather and weather["current_condition"]:
 
 ### Using Mock Mode
 
+Mock data provides realistic sample data that matches the structure of real API responses, but with clear visual indicators to help users identify when they're seeing mock data:
+
+1. In text format, mock data includes `[MOCK DATA]` in the output
+2. In JSON format, mock data includes a `mock_data_notice` field
+3. The location is always displayed as "MockCity, MockLand" regardless of the location parameter
+4. When using `with_metadata=True`, the `is_mock` field is set to `True`
+
 ```python
 import fetch_my_weather
 
@@ -165,8 +172,21 @@ import fetch_my_weather
 fetch_my_weather.set_mock_mode(True)
 
 # Get mock weather data (no API call is made)
-mock_weather = fetch_my_weather.get_weather(location="Tokyo")
-print(f"Mock temperature: {mock_weather.current_condition[0].temp_C}°C")
+# The location doesn't matter in mock mode, it will always return data for "MockCity"
+mock_weather = fetch_my_weather.get_weather(location="AnyCity")
+
+# You can identify mock data in various ways:
+if mock_weather.current_condition:
+    # Through the location name
+    location = mock_weather.nearest_area[0].areaName[0].value
+    country = mock_weather.nearest_area[0].country[0].value
+    print(f"Location: {location}, {country}")  # Will show "MockCity, MockLand"
+    
+    # Through the mock_data_notice field (in raw_json format)
+    if hasattr(mock_weather, "mock_data_notice"):
+        print(f"Notice: {mock_weather.mock_data_notice}")
+    
+    print(f"Mock temperature: {mock_weather.current_condition[0].temp_C}°C")
 
 # Override mock mode for a specific request
 real_weather = fetch_my_weather.get_weather(location="Tokyo", use_mock=False)
@@ -191,11 +211,11 @@ print(christmas_moon)
 
 ```python
 # Weather as PNG (returns bytes)
-london_png = fetch_my_weather.get_weather(location="London", format="png")
+city_png = fetch_my_weather.get_weather(location="Paris", format="png")
 
 # Save PNG to file
-with open("london_weather.png", "wb") as f:
-    f.write(london_png)
+with open("paris_weather.png", "wb") as f:
+    f.write(city_png)
 
 # PNG with transparency
 transparent_png = fetch_my_weather.get_weather(
@@ -203,7 +223,7 @@ transparent_png = fetch_my_weather.get_weather(
 )
 
 # Using the deprecated method (still works but not recommended)
-old_method_png = fetch_my_weather.get_weather(location="London", is_png=True)
+old_method_png = fetch_my_weather.get_weather(location="Paris", is_png=True)
 ```
 
 ### Caching Control
@@ -242,7 +262,7 @@ When encountering a 503 status code from wttr.in (typically indicating rate limi
 
 ```python
 # Even during rate limiting, this returns a valid Pydantic model instead of an error
-weather = fetch_my_weather.get_weather(location="London")
+weather = fetch_my_weather.get_weather(location="Paris")
 
 # Access data as normal - it's valid mock data instead of an error string
 if weather.current_condition:
@@ -256,7 +276,7 @@ You can use the `with_metadata=True` parameter to get information about the resp
 ```python
 # Get response with metadata
 response = fetch_my_weather.get_weather(
-    location="London",
+    location="Paris",
     with_metadata=True
 )
 

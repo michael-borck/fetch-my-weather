@@ -91,26 +91,26 @@ The package supports different view options:
 
 ```python
 # Full weather report (default)
-full_weather = fetch_my_weather.get_weather(location="London")
+full_weather = fetch_my_weather.get_weather(location="Paris")
 
 # Current weather only (no forecast)
-current_only = fetch_my_weather.get_weather(location="London", view_options="0")
+current_only = fetch_my_weather.get_weather(location="Paris", view_options="0")
 
 # One-day forecast 
-one_day = fetch_my_weather.get_weather(location="London", view_options="1")
+one_day = fetch_my_weather.get_weather(location="Paris", view_options="1")
 
 # Two-day forecast
-two_day = fetch_my_weather.get_weather(location="London", view_options="2")
+two_day = fetch_my_weather.get_weather(location="Paris", view_options="2")
 
 # Narrow version (good for smaller terminals)
-narrow = fetch_my_weather.get_weather(location="London", view_options="n")
+narrow = fetch_my_weather.get_weather(location="Paris", view_options="n")
 
 # Quiet version (no location in header)
-quiet = fetch_my_weather.get_weather(location="London", view_options="q")
+quiet = fetch_my_weather.get_weather(location="Paris", view_options="q")
 
 # You can combine options
-narrow_and_quiet = fetch_my_weather.get_weather(location="London", view_options="nq")
-narrow_quiet_one_day = fetch_my_weather.get_weather(location="London", view_options="nq1")
+narrow_and_quiet = fetch_my_weather.get_weather(location="Paris", view_options="nq")
+narrow_quiet_one_day = fetch_my_weather.get_weather(location="Paris", view_options="nq1")
 ```
 
 ### Changing Units
@@ -158,12 +158,12 @@ The package supports multiple data formats to suit different needs:
 
 ```python
 # JSON format (default) - returns a Pydantic model for structured data access
-json_weather = fetch_my_weather.get_weather(location="London")
+json_weather = fetch_my_weather.get_weather(location="Paris")
 # Access data with type safety and autocompletion
 temp = json_weather.current_condition[0].temp_C 
 
 # Raw JSON format - returns a Python dictionary
-raw_weather = fetch_my_weather.get_weather(location="London", format="raw_json")
+raw_weather = fetch_my_weather.get_weather(location="Paris", format="raw_json")
 # Access data using dictionary syntax
 temp = raw_weather["current_condition"][0]["temp_C"]
 condition = raw_weather["current_condition"][0]["weatherDesc"][0]["value"]
@@ -200,35 +200,35 @@ Weather data can also be returned as PNG images:
 
 ```python
 # Get weather as PNG image using format parameter (returns bytes)
-london_png = fetch_my_weather.get_weather(location="London", format="png")
+city_png = fetch_my_weather.get_weather(location="Paris", format="png")
 
 # Save the PNG to a file
-with open("london_weather.png", "wb") as f:
-    f.write(london_png)
+with open("paris_weather.png", "wb") as f:
+    f.write(city_png)
 
 # Get transparent PNG 
 transparent_png = fetch_my_weather.get_weather(
-    location="London", 
+    location="Paris", 
     format="png", 
     png_options="t"
 )
 
 # Get PNG with padding
 padded_png = fetch_my_weather.get_weather(
-    location="London", 
+    location="Paris", 
     format="png", 
     png_options="p"
 )
 
 # Combine PNG options
 transparent_padded = fetch_my_weather.get_weather(
-    location="London", 
+    location="Paris", 
     format="png", 
     png_options="tp"
 )
 
 # Legacy method (deprecated but still supported)
-legacy_png = fetch_my_weather.get_weather(location="London", is_png=True)
+legacy_png = fetch_my_weather.get_weather(location="Paris", is_png=True)
 ```
 
 ## Working with JSON & Models
@@ -239,10 +239,10 @@ When using the default JSON format, the package returns data as Pydantic models 
 from fetch_my_weather import WeatherResponse
 
 # Get weather data as a model (this is the default)
-weather = fetch_my_weather.get_weather(location="London")
+weather = fetch_my_weather.get_weather(location="Paris")
 
 # Using type hints for better IDE support
-weather_typed: WeatherResponse = fetch_my_weather.get_weather(location="London")
+weather_typed: WeatherResponse = fetch_my_weather.get_weather(location="Paris")
 
 # Access current conditions
 current = weather.current_condition[0]
@@ -300,7 +300,7 @@ import fetch_my_weather
 fetch_my_weather.set_mock_mode(True)
 
 # Now all requests will use mock data instead of real API calls
-mock_weather = fetch_my_weather.get_weather(location="London")
+mock_weather = fetch_my_weather.get_weather(location="AnyCity")
 print(f"Temperature: {mock_weather.current_condition[0].temp_C}°C")
 
 # Use mock mode for a single request
@@ -347,7 +347,7 @@ from fetch_my_weather import ResponseWrapper
 
 # Get weather with metadata
 response = fetch_my_weather.get_weather(
-    location="London",
+    location="Paris",
     with_metadata=True
 )
 

@@ -17,7 +17,7 @@ from .models import ResponseMetadata, ResponseWrapper, WeatherResponse
 # --- Configuration ---
 BASE_URL = "http://wttr.in/"
 _CACHE_DURATION_SECONDS = 600  # Cache data for 10 minutes
-_USER_AGENT = "fetch-my-weather/0.2.3"  # Be polite and identify our package
+_USER_AGENT = "fetch-my-weather/0.4.0"  # Be polite and identify our package
 _USE_MOCK_DATA = False  # Flag to use mock data instead of real API
 
 # --- In-memory Cache ---
@@ -28,15 +28,17 @@ _cache: dict[str, tuple[float, str | bytes | dict[str, Any] | WeatherResponse]] 
 # --- Mock Data ---
 # Sample responses for different request types
 _MOCK_DATA = {
-    "text": """Weather report: London
+    "text": """Weather report: MockCity
 
      \033[38;5;226m   \\  /\033[0m       Partly cloudy
      \033[38;5;226m _ /\"\"\033[38;5;250m.-.    \033[0m  \033[38;5;214m17\033[0m °C
      \033[38;5;226m   \\_\033[38;5;250m(   ).   \033[0m  ↗ \033[38;5;220m11\033[0m km/h
      \033[38;5;226m   /\033[38;5;250m(___(__) \033[0m  10 km
                   0.0 mm
+                  [MOCK DATA]
 """,
     "json": {
+        "mock_data_notice": "This is simulated weather data for educational purposes",
         "current_condition": [
             {
                 "FeelsLikeC": "16",
@@ -62,16 +64,16 @@ _MOCK_DATA = {
         ],
         "nearest_area": [
             {
-                "areaName": [{"value": "London"}],
-                "country": [{"value": "United Kingdom"}],
-                "region": [{"value": "City of London"}],
+                "areaName": [{"value": "MockCity"}],
+                "country": [{"value": "MockLand"}],
+                "region": [{"value": "MockRegion"}],
                 "latitude": "51.517",
                 "longitude": "-0.106",
                 "population": "7556900",
                 "weatherUrl": [{"value": ""}],
             }
         ],
-        "request": [{"query": "London", "type": "City"}],
+        "request": [{"query": "MockCity", "type": "City"}],
         "weather": [
             {
                 "date": "2025-04-13",

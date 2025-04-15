@@ -21,7 +21,7 @@ def main() -> None:
 
     # Example 1: Get weather data as a Pydantic model
     print("Example 1: Get weather data as a Pydantic model")
-    weather = fetch_my_weather.get_weather(location="London")
+    weather = fetch_my_weather.get_weather(location="Paris")
 
     # Verify we got a WeatherResponse object
     print(f"Response type: {type(weather)}")

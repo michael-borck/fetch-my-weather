@@ -129,11 +129,11 @@ paris_moon = fetch_my_weather.get_weather(is_moon=True, moon_location_hint=",+Pa
 import fetch_my_weather
 
 # Weather as PNG using format parameter (returns bytes)
-london_png = fetch_my_weather.get_weather(location="London", format="png")
+city_png = fetch_my_weather.get_weather(location="Paris", format="png")
 
 # Save PNG to file
-with open("london_weather.png", "wb") as f:
-    f.write(london_png)
+with open("paris_weather.png", "wb") as f:
+    f.write(city_png)
 
 # PNG with options (transparency)
 transparent_png = fetch_my_weather.get_weather(location="Tokyo", format="png", png_options="t")
@@ -160,7 +160,7 @@ fetch_my_weather.set_user_agent("My Weather App v1.0")
 fetch_my_weather.set_mock_mode(True)  # Use mock data instead of real API calls
 
 # Use mock mode for a single request
-mock_weather = fetch_my_weather.get_weather(location="London", use_mock=True)
+mock_weather = fetch_my_weather.get_weather(location="AnyCity", use_mock=True)
 ```
 
 ### Error Handling
@@ -189,7 +189,7 @@ import fetch_my_weather
 from fetch_my_weather import ResponseWrapper
 
 # Get weather with metadata information
-response = fetch_my_weather.get_weather(location="London", with_metadata=True)
+response = fetch_my_weather.get_weather(location="Paris", with_metadata=True)
 
 # Response is a wrapper containing both data and metadata
 if isinstance(response, ResponseWrapper):
@@ -221,7 +221,7 @@ When using the JSON format (default), the package returns a structured `WeatherR
 
 ```python
 # Example of accessing model properties
-weather = fetch_my_weather.get_weather(location="London")
+weather = fetch_my_weather.get_weather(location="Paris")
 
 # Current weather
 current = weather.current_condition[0]

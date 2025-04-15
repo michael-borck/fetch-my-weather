@@ -17,7 +17,7 @@ def main() -> None:
     # Example 1: Getting response with metadata
     print("Example 1: Getting response with metadata")
     response = fetch_my_weather.get_weather(
-        location="London",
+        location="Paris",
         with_metadata=True,  # This enables the metadata feature
     )
 
