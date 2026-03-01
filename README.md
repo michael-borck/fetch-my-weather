@@ -1,5 +1,9 @@
 # fetch-my-weather
 
+<!-- BADGES:START -->
+[![api](https://img.shields.io/badge/-api-blue?style=flat-square)](https://github.com/topics/api) [![beginner-friendly](https://img.shields.io/badge/-beginner--friendly-blue?style=flat-square)](https://github.com/topics/beginner-friendly) [![caching](https://img.shields.io/badge/-caching-blue?style=flat-square)](https://github.com/topics/caching) [![cli-tool](https://img.shields.io/badge/-cli--tool-blue?style=flat-square)](https://github.com/topics/cli-tool) [![educational](https://img.shields.io/badge/-educational-blue?style=flat-square)](https://github.com/topics/educational) [![json](https://img.shields.io/badge/-json-blue?style=flat-square)](https://github.com/topics/json) [![mini-projects](https://img.shields.io/badge/-mini--projects-blue?style=flat-square)](https://github.com/topics/mini-projects) [![pydantic](https://img.shields.io/badge/-pydantic-blue?style=flat-square)](https://github.com/topics/pydantic) [![python](https://img.shields.io/badge/-python-3776ab?style=flat-square)](https://github.com/topics/python) [![weather](https://img.shields.io/badge/-weather-blue?style=flat-square)](https://github.com/topics/weather)
+<!-- BADGES:END -->
+
 A beginner-friendly Python package for fetching weather data, designed for educational use.
 
 ## Features
